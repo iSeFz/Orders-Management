@@ -1,8 +1,6 @@
 package com.example.ordermanagement.model;
-
 import java.util.ArrayList;
 import java.util.List;
-
 public class Category {
     private List<Product> products;
 
