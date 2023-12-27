@@ -3,7 +3,7 @@ import com.example.ordermanagement.model.*;
 
 public class ShipMessageFirstTemplateService implements ShipMessageTemplate {
     ShipMessageFirstTemplate shipMessageFirstTemplate;
-    public ShipMessageFirstTemplateService() {
+   public ShipMessageFirstTemplateService(ShipMessageFirstTemplate shipMessageFirstTemplate) {
         this.shipMessageFirstTemplate = shipMessageFirstTemplate;
     }
     public void setShipMessageFirstTemplate(ShipMessageFirstTemplate shipMessageFirstTemplate) {
