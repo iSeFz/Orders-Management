@@ -21,7 +21,7 @@ public class ProductController {
 //        return productService.addProduct(p);
 //    }
     public boolean addProduct(@RequestParam Integer sn, @RequestParam String name, @RequestParam String vendor, @RequestParam double price,@RequestParam String cname, @RequestParam Integer rm){
-        Product p = new Product(sn,name,vendor,price,new Category(cname),rm);
+        Product p = new Product(sn,name,vendor,price,cname,rm);
         return productService.addProduct(p);
     }
 }

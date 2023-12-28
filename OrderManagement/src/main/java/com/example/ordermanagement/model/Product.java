@@ -5,15 +5,16 @@ public class Product {
     private String name;
     private String vendor;
     private double price;
-    private Category category;
+//    private Category category;
+    private String categoryName;
     private int remainingCount;
 
-    public Product(int serialNum, String name, String vendor, double price, Category category, int remainingCount) {
+    public Product(int serialNum, String name, String vendor, double price, String category, int remainingCount) {
         this.serialNum = serialNum;
         this.name = name;
         this.vendor = vendor;
         this.price = price;
-        this.category = category;
+        this.categoryName = category;
         this.remainingCount = remainingCount;
     }
 
@@ -33,14 +34,14 @@ public class Product {
         this.name = name;
     }
 
-    public Category getCategory() {
-        return category;
-    }
-    public String getCategoryName(){return category.getName();}
+//    public Category getCategory() {
+//        return category;
+//    }
+    public String getCategoryName(){return categoryName;}
 
-    public void setCategory(Category category) {
-        this.category = category;
-    }
+//    public void setCategory(Category category) {
+//        this.category = category;
+//    }
 
     public int getRemainingCount() {
         return remainingCount;

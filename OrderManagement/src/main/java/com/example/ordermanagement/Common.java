@@ -13,16 +13,15 @@ public class Common {
     public List<Product> productList;
     public List<Customer> customerList;
     public List<Category> categories;
-    public Category c = new Category("alban");
     public Common(){
         productList = new ArrayList<>();
         customerList = new ArrayList<>();
         categories = new ArrayList<>();
-        Product p1 =new Product(1,"milk","sasa",189,c,10);
-        Product p2 =new Product(2,"cheese","oppad",22,c,90);
-        Product p3 =new Product(3,"potato maklya","syfe",25,c,90);
-        Product p4 =new Product(4,"basal","syfe",40,c,5);
-        Product p5 =new Product(5,"kabsa","yousef",1800,c,96);
+        Product p1 =new Product(1,"milk","sasa",189,"alban",10);
+        Product p2 =new Product(2,"cheese","oppad",22,"alban",90);
+        Product p3 =new Product(3,"potato maklya","syfe",25,"alban",90);
+        Product p4 =new Product(4,"basal","syfe",40,"alban",5);
+        Product p5 =new Product(5,"kabsa","yousef",1800,"alban",96);
         productList.addAll(Arrays.asList(p1,p2,p3,p4,p5));
         for(Product p : productList){
             boolean status = false;
