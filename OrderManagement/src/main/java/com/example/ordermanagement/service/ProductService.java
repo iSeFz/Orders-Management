@@ -1,47 +1,54 @@
 package com.example.ordermanagement.service;
 
-import com.example.ordermanagement.Common;
-import com.example.ordermanagement.model.Category;
+import com.example.ordermanagement.repos.ProductsRepo;
 import com.example.ordermanagement.model.Product;
-import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
+import com.example.ordermanagement.model.Category;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+
+// Products Service
 @Service
 public class ProductService {
-    private List<Category> categories;
-    public Common common = new Common();
-    public ProductService(){
-        categories = common.categories;
-    }
-    public String listDetails() { // business logic
-        return "Product Details";
-    }
-    public List<Category> getProducts(){
-        return categories;
+    // Product repo & category service to be injected
+    @Autowired
+    private final ProductsRepo productsRepo;
+    @Autowired
+    private final CategoryService categoryService;
+
+    // Constructor to inject the repo & the category service
+    public ProductService(ProductsRepo productsRepo, CategoryService categoryService) {
+        this.productsRepo = productsRepo;
+        this.categoryService = categoryService;
+        // Add existing products to their categories
+        for (Product product : productsRepo.getProducts())
+            categoryService.addProductToCategory(product);
     }
 
-    public boolean addProduct(Product p){
-        for(Category c : categories){
-            if(c.getName().equals(p.getCategoryName())){
-                for(Product pr : c.getProducts()){
-                    if(pr.getName() == p.getName()){
-                        return false;
-                    }
-                }
-                c.addProduct(p);
-                return true;
-            }
-        }
-        categories.add(new Category(p.getCategoryName()));
-        categories.getLast().addProduct(p);
-        return true;
+    // Add a new product to the list of products
+    public Product addProduct(int serialNum, String name, String vendor,
+            double price, String categoryName, int remainingCount) {
+        Product newProduct = new Product(serialNum, name, vendor, price, categoryName, remainingCount);
+        // Add the new product to its corresponding category
+        categoryService.addProductToCategory(newProduct);
+        // Add the new product to the list of products in the products repo
+        return productsRepo.addProduct(newProduct);
     }
-    public int getRemainingCount(Product P) { // business logic
-        return P.getRemainingCount();
+
+    // Return all system products
+    public List<Product> getProducts() {
+        return productsRepo.getProducts();
+    }
+
+    // Return all system categories
+    public List<Category> getCategories() {
+        return categoryService.getCategories();
+    }
+
+    // Return the reamining count of certain product
+    public int getRemainingCount(Product product) {
+        return product.getRemainingCount();
     }
 }
