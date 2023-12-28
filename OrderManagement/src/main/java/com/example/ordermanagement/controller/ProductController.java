@@ -13,7 +13,7 @@ public class ProductController {
     @Autowired
     private ProductService productService = new ProductService();
     @GetMapping("/get_products")
-    public List<Product> getAllProducts(){
+    public List<Category> getAllProducts(){
         return productService.getProducts();
     }
     @PostMapping("/addProduct")

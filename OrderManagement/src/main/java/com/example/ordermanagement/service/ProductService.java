@@ -13,26 +13,32 @@ import java.util.Objects;
 
 @Service
 public class ProductService {
-    private List<Product> productList;
+    private List<Category> categories;
     public Common common = new Common();
-    Category c = new Category("maez");
     public ProductService(){
-        productList = common.productList;
+        categories = common.categories;
     }
     public String listDetails() { // business logic
         return "Product Details";
     }
-    public List<Product> getProducts(){
-        return productList;
+    public List<Category> getProducts(){
+        return categories;
     }
 
     public boolean addProduct(Product p){
-        for(Product pr :productList){
-            if(Objects.equals(pr.getName(), p.getName())){
-                return false;
+        for(Category c : categories){
+            if(c.getName() == p.getCategoryName()){
+                for(Product pr : c.getProducts()){
+                    if(pr.getName() == p.getName()){
+                        return false;
+                    }
+                }
+                c.addProduct(p);
+                return true;
             }
         }
-        productList.add(p);
+        categories.add(new Category(p.getCategoryName()));
+        categories.getLast().addProduct(p);
         return true;
     }
     public int getRemainingCount(Product P) { // business logic

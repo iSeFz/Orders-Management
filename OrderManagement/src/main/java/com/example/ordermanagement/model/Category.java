@@ -13,4 +13,10 @@ public class Category {
     public List<Product> getProducts() {
         return this.products;
     }
+    public void addProduct(Product p){
+        products.add(p);
+    }
+    public String getName(){
+        return name;
+    }
 }

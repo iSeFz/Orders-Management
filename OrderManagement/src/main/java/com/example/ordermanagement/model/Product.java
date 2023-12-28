@@ -36,6 +36,7 @@ public class Product {
     public Category getCategory() {
         return category;
     }
+    public String getCategoryName(){return category.getName();}
 
     public void setCategory(Category category) {
         this.category = category;
