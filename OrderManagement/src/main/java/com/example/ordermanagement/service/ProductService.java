@@ -27,7 +27,7 @@ public class ProductService {
 
     public boolean addProduct(Product p){
         for(Category c : categories){
-            if(c.getName() == p.getCategoryName()){
+            if(c.getName().equals(p.getCategoryName())){
                 for(Product pr : c.getProducts()){
                     if(pr.getName() == p.getName()){
                         return false;
