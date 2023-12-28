@@ -1,27 +1,41 @@
 package com.example.ordermanagement.controller;
 
-import com.example.ordermanagement.model.Category;
-import com.example.ordermanagement.model.Product;
 import com.example.ordermanagement.service.ProductService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import com.example.ordermanagement.model.Product;
+import com.example.ordermanagement.model.Category;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.*;
+
+// Rest Controller for products
 @RestController
+@RequestMapping("/products")
 public class ProductController {
-    @Autowired
-    private ProductService productService = new ProductService();
-    @GetMapping("/get_products")
-    public List<Category> getAllProducts(){
+    // Product Service to be injected
+    private final ProductService productService;
+
+    // Constructor to inject the service
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
+
+    // Add a new product to the list of products
+    @PostMapping("/addProduct")
+    public Product addProduct(@RequestParam int serialNum, @RequestParam String name, @RequestParam String vendor,
+            @RequestParam double price, @RequestParam String categoryName, @RequestParam int remainingCount) {
+        return productService.addProduct(serialNum, name, vendor, price, categoryName, remainingCount);
+    }
+
+    // Get all system products
+    @GetMapping("/getAllProducts")
+    public List<Product> getAllProducts() {
         return productService.getProducts();
     }
-    @PostMapping("/addProduct")
-//    public boolean addProduct(@RequestBody Product p){
-//        return productService.addProduct(p);
-//    }
-    public boolean addProduct(@RequestParam Integer sn, @RequestParam String name, @RequestParam String vendor, @RequestParam double price,@RequestParam String cname, @RequestParam Integer rm){
-        Product p = new Product(sn,name,vendor,price,cname,rm);
-        return productService.addProduct(p);
+
+    // Get all system categories
+    @GetMapping("/getCats")
+    public List<Category> getCategories() {
+        return productService.getCategories();
     }
 }
