@@ -1,32 +1,33 @@
 package com.example.ordermanagement.service;
 
+import com.example.ordermanagement.repos.CategoriesRepo;
 import com.example.ordermanagement.model.Category;
 import com.example.ordermanagement.model.Product;
-import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.List;
 
+// Category Service
 @Service
 public class CategoryService {
-    private List<Category> categories;
-    public CategoryService(){
-        categories = new ArrayList<>();
-    }
-    public int getRemainingCount() { // business logic
-        return 0;
+    // Repo to be injected
+    @Autowired
+    private final CategoriesRepo categoriesRepo;
+
+    // Constructor to inject the repo
+    public CategoryService(CategoriesRepo categoriesRepo) {
+        this.categoriesRepo = categoriesRepo;
     }
 
-    public void addProductToCategory(Product p , String categoryName) {
-        for(Category c:categories){
-            if(c.getName() == categoryName){
-                c.addProduct(p);
-            }
-        }
-        // business logic
+    // Add product to certain category
+    public String addProductToCategory(Product newProduct) {
+        return categoriesRepo.addProductToCategory(newProduct);
     }
 
-    public void removeProduct(Product p) {
-        categories.remove(p);// business logic
+    // Return the list of current categories on the system
+    public List<Category> getCategories() {
+        return categoriesRepo.getCategories();
     }
 }
