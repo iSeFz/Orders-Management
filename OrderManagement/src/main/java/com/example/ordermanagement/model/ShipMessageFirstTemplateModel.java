@@ -1,12 +1,12 @@
 package com.example.ordermanagement.model;
-import java.util.List;
-public class ShipMessageFirstTemplate{
+
+public class ShipMessageFirstTemplateModel {
     private String CustomerName;
     private OrderComponent OrderList;
-    public ShipMessageFirstTemplate(){
+    public ShipMessageFirstTemplateModel(){
         this.OrderList = null;
     }
-    public ShipMessageFirstTemplate(String customerName, OrderComponent orderList) {
+    public ShipMessageFirstTemplateModel(String customerName, OrderComponent orderList) {
         CustomerName = customerName;
         OrderList = orderList;
     }

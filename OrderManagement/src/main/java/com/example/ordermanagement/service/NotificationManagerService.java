@@ -1,20 +1,35 @@
 package com.example.ordermanagement.service;
 import com.example.ordermanagement.model.*;
+
+import java.util.Queue;
+
 public class NotificationManagerService {
-    NotificationManager notificationManager;
-    public NotificationManagerService( NotificationManager notificationManager) {
-        this.notificationManager = notificationManager;
+    NotificationManagerModel notificationManagerModel;
+    public NotificationManagerService() {
+        notificationManagerModel = new NotificationManagerModel();
     }
-    public void SetNotificationManager(NotificationManager notificationManager) {
-        this.notificationManager = notificationManager;
+    public void setNotificationManagerModel(NotificationManagerModel notificationManagerModel) {
+        this.notificationManagerModel = notificationManagerModel;
     }
-    public NotificationManager GetNotificationManager() {
-        return notificationManager;
+    public NotificationManagerModel getNotificationManagerModel() {
+        return notificationManagerModel;
     }
-    public void addNotification(MessageTemplate messageTemplate) {
-        notificationManager.getqueue().add(messageTemplate);
+    public void addNotification(NotificationService notificationService) {
+        notificationManagerModel.getqueue().add(notificationService);
     }
-    public void removeNotification(MessageTemplate messageTemplate) {
-        notificationManager.getqueue().remove(messageTemplate);
+    public String getMessage(int orderId) {
+        for (NotificationService notificationService : notificationManagerModel.getqueue()) {
+            if (notificationService.notificationModel.getOrderSerialNumberID() == orderId) {
+                return notificationService.doSendNotifcation();
+            }
+        }
+        return "No message found";
+    }
+    public void removeNotification(int orderId) {
+        for (NotificationService notificationService : notificationManagerModel.getqueue()) {
+            if (notificationService.notificationModel.getOrderSerialNumberID() == orderId) {
+                notificationManagerModel.getqueue().remove(notificationService);
+            }
+        }
     }
 }
