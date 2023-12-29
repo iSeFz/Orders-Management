@@ -34,7 +34,7 @@ public class Common {
             }
             if(!status){
                 categories.add(new Category(p.getCategoryName()));
-                categories.getLast().addProduct(p);
+//                categories.getLast().addProduct(p);
             }
         }
         Customer c1 = new Customer("mostaf","mostafa@gmail.com","12345",90000);

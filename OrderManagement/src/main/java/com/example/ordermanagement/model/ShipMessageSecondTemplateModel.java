@@ -1,6 +1,6 @@
 package com.example.ordermanagement.model;
 
-public class ShipMessageSecondTemplate{
+public class ShipMessageSecondTemplateModel {
     private String CustomerName;
     public void setCustomerName(String customerName) {
         CustomerName = customerName;

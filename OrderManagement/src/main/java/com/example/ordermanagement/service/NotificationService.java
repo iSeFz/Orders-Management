@@ -1,17 +1,17 @@
 package com.example.ordermanagement.service;
+
 import com.example.ordermanagement.model.*;
-public class NotificationService {
-    Notification notification;
-    NotificationService(Notification notification) {
-        this.notification = notification;
+
+public abstract class NotificationService {
+    NotificationModel notificationModel;
+    public NotificationService(NotificationModel notificationModel) {
+        this.notificationModel = notificationModel;
     }
-    public void setTemplate(Notification notification) {
-        this.notification = notification;
+    public void setNotification(NotificationModel notificationModel) {
+        this.notificationModel = notificationModel;
     }
-    public Notification getTemplate() {
-        return notification;
+    public NotificationModel getNotification() {
+        return notificationModel;
     }
-    public String doSendNotifcation() {
-        return notification.getTemplate().SendMessage();
-    }
+    public abstract String doSendNotifcation();
 }
