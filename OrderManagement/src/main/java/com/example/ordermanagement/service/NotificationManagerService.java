@@ -32,4 +32,7 @@ public class NotificationManagerService {
             }
         }
     }
+    public void removeFirstNotification() {
+        notificationManagerModel.getqueue().remove();
+    }
 }
