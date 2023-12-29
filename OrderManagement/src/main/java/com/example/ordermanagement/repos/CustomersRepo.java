@@ -3,6 +3,7 @@ package com.example.ordermanagement.repos;
 import com.example.ordermanagement.model.Customer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -15,6 +16,12 @@ public class CustomersRepo {
     // Default Constructor
     public CustomersRepo() {
         this.customers = new ArrayList<Customer>();
+        Customer c1 = new Customer("Mostafa", "mostafa@gmail.com", "12345", 90000);
+        Customer c2 = new Customer("Oppad", "oppad@gmail.com", "67890", 1000);
+        Customer c3 = new Customer("Seif", "seif@gmail.com", "23456", 300);
+        Customer c4 = new Customer("Yousef", "mostafa@gmail.com", "78901", 600);
+        Customer c5 = new Customer("Osama", "osos@gmail.com", "12345", 7000);
+        customers.addAll(Arrays.asList(c1, c2, c3, c4, c5));
     }
 
     // Parameterized Constructor
