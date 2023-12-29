@@ -35,4 +35,11 @@ public class NotificationManagerService {
     public void removeFirstNotification() {
         notificationManagerModel.getqueue().remove();
     }
+    public void removeAllNotification() {
+        notificationManagerModel.getqueue().clear();
+    }
+    public int getQueueSize() {
+        return notificationManagerModel.getqueue().size();
+    }
+
 }
