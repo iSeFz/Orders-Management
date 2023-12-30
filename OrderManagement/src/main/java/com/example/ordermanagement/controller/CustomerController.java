@@ -26,17 +26,12 @@ public class CustomerController {
         return customerService.addCustomer(name, email, password, balance);
     }
 
-    // Deduct the cost of an order from the customer's balance
-    @PutMapping("/deductCost/{cost}")
-    public String deductCost(@RequestBody Customer customer, @PathVariable("cost") double cost) {
-        return customerService.deductCost(customer, cost);
+    // Place an order endpoint
+    @PostMapping("/placeSimpleOrder")
+    public String placeSimpleOrder(@RequestParam String customerName,
+        @RequestBody List<Integer> listOfProducts) {
+        return customerService.placeSimpleOrder(customerName, listOfProducts);
     }
-
-    /* // Deduct the shipping fees from the customer's balance
-    @PutMapping("/deductShippingFees/{fees}")
-    public String deductShippingFees(@RequestBody Customer customer, @PathVariable("fees") double fees) {
-        return customerService.deductShippingFees(customer, fees);
-    } */
 
     // Get all system customers
     @GetMapping("/getAllCustomers")
