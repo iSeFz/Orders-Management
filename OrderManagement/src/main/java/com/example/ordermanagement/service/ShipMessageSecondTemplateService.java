@@ -2,9 +2,9 @@ package com.example.ordermanagement.service;
 
 import com.example.ordermanagement.model.*;
 
-public class ShipMessageSecondTemplateServiceService implements ShipMessageTemplateService {
+public class ShipMessageSecondTemplateService implements ShipMessageTemplateService {
     ShipMessageSecondTemplateModel shipMessageSecondTemplateModel;
-    public ShipMessageSecondTemplateServiceService(ShipMessageSecondTemplateModel shipMessageSecondTemplateModel) {
+    public ShipMessageSecondTemplateService(ShipMessageSecondTemplateModel shipMessageSecondTemplateModel) {
         this.shipMessageSecondTemplateModel = shipMessageSecondTemplateModel;
     }
     public void setShipMessageSecondTemplate(ShipMessageSecondTemplateModel shipMessageSecondTemplateModel) {

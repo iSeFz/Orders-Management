@@ -1,23 +1,22 @@
 package com.example.ordermanagement.service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
 import com.example.ordermanagement.model.*;
+import com.example.ordermanagement.repos.NotificationManagerRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-
 import com.example.ordermanagement.repos.CustomersRepo;
 import com.example.ordermanagement.repos.ProductsRepo;
-
 @Service
 public class CustomerService {
     // Customer & Product repos to be injected
     @Autowired
     private final CustomersRepo customersRepo;
+    @Autowired
+    private final NotificationManagerRepo notificationManagerRepo;
 
     private final ProductsRepo productsRepo;
     // Order Service Instance
@@ -29,8 +28,9 @@ public class CustomerService {
     private final OrderComponentService orderService2;
 
     // Constructor to inject the repo
-    public CustomerService(CustomersRepo customersRepo, ProductsRepo productsRepo, @Qualifier("simpleOrderService") OrderComponentService orderService1 , @Qualifier("compoundOrderService") OrderComponentService orderService2) {
+    public CustomerService(CustomersRepo customersRepo, NotificationManagerRepo notificationManagerRepo, ProductsRepo productsRepo, @Qualifier("simpleOrderService") OrderComponentService orderService1 , @Qualifier("compoundOrderService") OrderComponentService orderService2) {
         this.customersRepo = customersRepo;
+        this.notificationManagerRepo = notificationManagerRepo;
         this.productsRepo = productsRepo;
         this.orderService1 = orderService1;
         this.orderService2 = orderService2;
@@ -59,6 +59,8 @@ public class CustomerService {
     // Place a simple order & assign it to its customer with the list of products given
     public SimpleOrder placeSimpleOrder(String customerName, List<Integer> listOfProductSerials) {
         // Get the customer from the repo
+
+
         Customer customer = customersRepo.getCustomer(customerName);
         // If the customer doesn't exist, return null
         if (customer == null)
@@ -87,6 +89,25 @@ public class CustomerService {
         // Add the order to the list of customer orders
         customer.addOrder(newOrder);
         // Deduct the order cost from the customer's balance, return the newly created order
+        /////////////////////////////////////////////////////////////////
+        //Placment Message
+        PlacmentMessageTemplateService placmentMessageTemplateService = new PlacmentMessageFirstTemplateService();
+        MessageTemplateService messageTemplateService =placmentMessageTemplateService;
+        NotificationModel Model =new NotificationModel(messageTemplateService,newOrder.getOrderId());
+        NotificationService notificationService = new EmailNotificationService(Model);
+        String Message= notificationService.doSendNotifcation();
+        /////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////
+        //Ship Message
+        ShipMessageFirstTemplateModel shipMessageFirstTemplateModel = new ShipMessageFirstTemplateModel();
+        shipMessageFirstTemplateModel.setCustomerName(customerName);
+        shipMessageFirstTemplateModel.setOrderList(products);
+        MessageTemplateService MessageTemp= new ShipMessageFirstTemplateService(shipMessageFirstTemplateModel);
+        NotificationModel Model2 =new NotificationModel(MessageTemp,newOrder.getOrderId());
+        NotificationService notificationService2 = new EmailNotificationService(Model2);
+        NotificationManagerService notificationManagerService = new NotificationManagerService(notificationManagerRepo);
+        notificationManagerService.addNotification(notificationService2);
+        ///////////////////////////////////////
         if (orderService1.deductTotalCost(customerName, newOrder.getOrderId()))
             return newOrder;
             // return newOrder.listDetails();
@@ -106,19 +127,46 @@ public class CustomerService {
         CompoundOrder compoundOrder = new CompoundOrder(customer);
         // Set the order id
         compoundOrder.setOrderId(generateOrderID());
-
+        /////////////////////////////////////////////////////////////////
         // place the order of customer
         SimpleOrder ownerOrder = placeSimpleOrder(customerName, listOfProductSerials);
         compoundOrder.addOrder(ownerOrder);
         // Deduct the order cost from the owner customer's balance
         orderService1.deductTotalCost(customerName, ownerOrder.getOrderId());
-
+        //Placment Message
+        PlacmentMessageTemplateService placmentMessageTemplateService = new PlacmentMessageFirstTemplateService();
+        MessageTemplateService messageTemplateService =placmentMessageTemplateService;
+        NotificationModel Model =new NotificationModel(messageTemplateService,compoundOrder.getOrderId());
+        NotificationService notificationService = new EmailNotificationService(Model);
+        String Message= notificationService.doSendNotifcation();
+        /////////////////////////////////////////////////////////////////
+        //Ship Message
+        ShipMessageFirstTemplateModel shipMessageFirstTemplateModel = new ShipMessageFirstTemplateModel();
+        shipMessageFirstTemplateModel.setCustomerName(customerName);
+        shipMessageFirstTemplateModel.setOrderList(ownerOrder.getProducts());
+        MessageTemplateService MessageTemp= new ShipMessageFirstTemplateService(shipMessageFirstTemplateModel);
+        NotificationModel Model2 =new NotificationModel(MessageTemp,compoundOrder.getOrderId());
+        NotificationService notificationService2 = new EmailNotificationService(Model2);
+        NotificationManagerService notificationManagerService = new NotificationManagerService(notificationManagerRepo);
+        notificationManagerService.addNotification(notificationService2);
+        ///////////////////////////////////////
         for (Map.Entry<String, Integer> entry : listOfFriendOrders.entrySet()) {
             SimpleOrder simpleOrder = (SimpleOrder) orderService1.getCertainOrder(entry.getKey(), entry.getValue());
             // Deduct the order cost from the customer's balance
             orderService1.deductTotalCost(entry.getKey(), entry.getValue());
             // Add friend order to the list of orders
             compoundOrder.addOrder(simpleOrder);
+            /////////////////////////////////////////////////////////////////
+            //Ship Message
+            ShipMessageFirstTemplateModel shipMessageFirstTemplateModel1 = new ShipMessageFirstTemplateModel();
+            shipMessageFirstTemplateModel.setCustomerName(entry.getKey());
+            shipMessageFirstTemplateModel.setOrderList(simpleOrder.getProducts());
+            MessageTemplateService MessageTemp1= new ShipMessageFirstTemplateService(shipMessageFirstTemplateModel1);
+            NotificationModel Model1 =new NotificationModel(MessageTemp1,simpleOrder.getOrderId());
+            NotificationService notificationService1 = new EmailNotificationService(Model1);
+            NotificationManagerService notificationManagerService1 = new NotificationManagerService(notificationManagerRepo);
+            notificationManagerService1.addNotification(notificationService1);
+            ///////////////////////////////////////
         }
         return compoundOrder;
     }
@@ -132,9 +180,8 @@ public class CustomerService {
 
         if (!deducateShippingFees)
             return "Insufficient customer balance";
-
         // get shipment notification
-        NotificationManagerService notificationManagerService = new NotificationManagerService();
+        NotificationManagerService notificationManagerService = new NotificationManagerService(notificationManagerRepo);
         // notificationManagerService.setNotificationManagerModel(notificationManagerModel);
         String message = notificationManagerService.getMessage(order.getOrderId());
         // remove notification from queue
@@ -156,10 +203,9 @@ public class CustomerService {
             return "Insufficient customer balance";
 
         // get shipment notification
-        NotificationManagerService notificationManagerService = new NotificationManagerService();
+        NotificationManagerService notificationManagerService = new NotificationManagerService(notificationManagerRepo);
         //notificationManagerService.setNotificationManagerModel(notificationManagerModel);
         String message = notificationManagerService.getMessage(order.getOrderId());
-
         // remove all notifications of all orders in the compound order
         for (OrderComponent otherOrder : otherOrders) {
             if (otherOrder instanceof SimpleOrder) {
@@ -171,7 +217,7 @@ public class CustomerService {
         notificationManagerService.removeNotification(order.getOrderId());
         return message;
     }
-    
+
     // Return all system customers
     public List<Customer> getCustomers() {
         return customersRepo.getCustomers();

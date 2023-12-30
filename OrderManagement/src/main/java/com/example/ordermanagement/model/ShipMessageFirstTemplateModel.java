@@ -1,25 +1,27 @@
 package com.example.ordermanagement.model;
 
+import java.util.List;
+
 public class ShipMessageFirstTemplateModel {
     private String CustomerName;
-    private OrderComponent OrderList;
+    private List<Product> OrderList;
     public ShipMessageFirstTemplateModel(){
         this.OrderList = null;
     }
-    public ShipMessageFirstTemplateModel(String customerName, OrderComponent orderList) {
+    public ShipMessageFirstTemplateModel(String customerName, List<Product> OrderList) {
         CustomerName = customerName;
-        OrderList = orderList;
+        this.OrderList = OrderList;
     }
     public void setCustomerName(String customerName) {
         CustomerName = customerName;
     }
-    public void setOrderList(OrderComponent orderList) {
-        OrderList = orderList;
+    public void setOrderList(List<Product> OrderList) {
+        this.OrderList = OrderList;
     }
     public String getCustomerName() {
         return CustomerName;
     }
-    public OrderComponent getOrderList() {
+    public List<Product> getOrderList() {
         return OrderList;
     }
 }

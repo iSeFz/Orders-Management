@@ -4,14 +4,14 @@ import com.example.ordermanagement.model.*;
 import com.example.ordermanagement.repos.CustomersRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.example.ordermanagement.model.NotificationManagerModel;
+import com.example.ordermanagement.repos.NotificationManagerRepo;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class CompoundOrderService implements OrderComponentService{
-    NotificationManagerModel notificationManagerModel = new NotificationManagerModel();
+    NotificationManagerRepo notificationManagerRepo = new NotificationManagerRepo();
     /*public CompoundOrderService(NotificationManagerModel notificationManagerModel) {
         this.notificationManagerModel = notificationManagerModel;
     }*/
