@@ -3,23 +3,44 @@ package com.example.ordermanagement.model;
 import java.util.ArrayList;
 import java.util.List;
 
+// Customer entity class
 public class Customer {
     private String username;
     private String email;
     private String password;
     private double balance;
+    private List<Customer> friends;
     private List<OrderComponent> orders;
 
-    public Customer() { }
+    // Default constructor
+    public Customer() {
+        this.username = "";
+        this.email = "";
+        this.password = "";
+        this.balance = 0.0;
+        this.friends = new ArrayList<>();
+        this.orders = new ArrayList<>();
+    }
 
+    // Parameterized constructor
     public Customer(String username, String email, String password, double balance) {
+        this();
         this.username = username;
         this.email = email;
         this.password = password;
         this.balance = balance;
-        this.orders = new ArrayList<>();
     }
 
+    // Add a new order to the list of orders
+    public void addOrder(OrderComponent order) {
+        this.orders.add(order);
+    }
+
+    // Add a new friend to the list of friends
+    public void addFriend(Customer friend) {
+        this.friends.add(friend);
+    }
+    
     public void setUsername(String username) {
         this.username = username;
     }
@@ -52,6 +73,10 @@ public class Customer {
         return balance;
     }
 
+    public List<Customer> getFriends() {
+        return friends;
+    }
+    
     public List<OrderComponent> getOrders() {
         return orders;
     }
