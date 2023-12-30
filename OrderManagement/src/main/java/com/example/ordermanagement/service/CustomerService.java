@@ -2,15 +2,14 @@ package com.example.ordermanagement.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
+import com.example.ordermanagement.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import com.example.ordermanagement.model.Customer;
-import com.example.ordermanagement.model.OrderComponent;
-import com.example.ordermanagement.model.Product;
-import com.example.ordermanagement.model.SimpleOrder;
 import com.example.ordermanagement.repos.CustomersRepo;
 import com.example.ordermanagement.repos.ProductsRepo;
 
@@ -19,17 +18,22 @@ public class CustomerService {
     // Customer & Product repos to be injected
     @Autowired
     private final CustomersRepo customersRepo;
-    @Autowired
+
     private final ProductsRepo productsRepo;
     // Order Service Instance
+    @Qualifier("simpleOrderService")
     @Autowired
-    private final OrderComponentService orderService;
+    private final OrderComponentService orderService1;
+    @Qualifier("compoundOrderService")
+    @Autowired
+    private final OrderComponentService orderService2;
 
     // Constructor to inject the repo
-    public CustomerService(CustomersRepo customersRepo, ProductsRepo productsRepo, OrderComponentService orderService) {
+    public CustomerService(CustomersRepo customersRepo, ProductsRepo productsRepo, @Qualifier("simpleOrderService") OrderComponentService orderService1 , @Qualifier("compoundOrderService") OrderComponentService orderService2) {
         this.customersRepo = customersRepo;
         this.productsRepo = productsRepo;
-        this.orderService = orderService;
+        this.orderService1 = orderService1;
+        this.orderService2 = orderService2;
     }
 
     // Create a new account for a customer & add it to the list of customers
@@ -53,12 +57,13 @@ public class CustomerService {
     } */
 
     // Place a simple order & assign it to its customer with the list of products given
-    public String placeSimpleOrder(String customerName, List<Integer> listOfProductSerials) {
+    public SimpleOrder placeSimpleOrder(String customerName, List<Integer> listOfProductSerials) {
         // Get the customer from the repo
         Customer customer = customersRepo.getCustomer(customerName);
         // If the customer doesn't exist, return null
         if (customer == null)
-            return "Customer NOT found!";
+            return null;
+            // return "Customer NOT found!";
         // List of products to get from the repo
         List<Product> products = new ArrayList<Product>();
         // Get the products from the repo
@@ -73,7 +78,7 @@ public class CustomerService {
             }
         }
         // Create a new order
-        SimpleOrder newOrder = new SimpleOrder(customer, "Egypt");
+        SimpleOrder newOrder = new SimpleOrder(customer);
         // Add the products to the order
         for (Product product : products)
             newOrder.addProduct(product);
@@ -82,10 +87,89 @@ public class CustomerService {
         // Add the order to the list of customer orders
         customer.addOrder(newOrder);
         // Deduct the order cost from the customer's balance, return the newly created order
-        if (orderService.deductTotalCost(customerName, newOrder.getOrderId()))
-            return newOrder.listDetails();
+        if (orderService1.deductTotalCost(customerName, newOrder.getOrderId()))
+            return newOrder;
+            // return newOrder.listDetails();
         // Otherwise, return null
-        return "Insufficient customer balance";
+        return null;
+        // return "Insufficient customer balance";
+    }
+
+    public CompoundOrder placeCompoundOrder(String customerName, List<Integer> listOfProductSerials, Map<String, Integer> listOfFriendOrders) {
+        // Get the customer from the repo
+        Customer customer = customersRepo.getCustomer(customerName);
+        // If the customer doesn't exist, return null
+        if (customer == null)
+            return null;
+
+        // make compound order
+        CompoundOrder compoundOrder = new CompoundOrder(customer);
+        // Set the order id
+        compoundOrder.setOrderId(generateOrderID());
+
+        // place the order of customer
+        SimpleOrder ownerOrder = placeSimpleOrder(customerName, listOfProductSerials);
+        compoundOrder.addOrder(ownerOrder);
+        // Deduct the order cost from the owner customer's balance
+        orderService1.deductTotalCost(customerName, ownerOrder.getOrderId());
+
+        for (Map.Entry<String, Integer> entry : listOfFriendOrders.entrySet()) {
+            SimpleOrder simpleOrder = (SimpleOrder) orderService1.getCertainOrder(entry.getKey(), entry.getValue());
+            // Deduct the order cost from the customer's balance
+            orderService1.deductTotalCost(entry.getKey(), entry.getValue());
+            // Add friend order to the list of orders
+            compoundOrder.addOrder(simpleOrder);
+        }
+        return compoundOrder;
+    }
+
+    // Ship an existing Simple order
+    public String shipSimpleOrder(String customerName, Integer orderID) {
+        // Get the specified order
+        SimpleOrder order = (SimpleOrder) orderService1.getCertainOrder(customerName, orderID);
+        // check if customer can deducate shipping fees or not
+        boolean deducateShippingFees = orderService1.deductShippingFees(customerName, orderID);
+
+        if (!deducateShippingFees)
+            return "Insufficient customer balance";
+
+        // get shipment notification
+        NotificationManagerService notificationManagerService = new NotificationManagerService();
+        // notificationManagerService.setNotificationManagerModel(notificationManagerModel);
+        String message = notificationManagerService.getMessage(order.getOrderId());
+        // remove notification from queue
+        notificationManagerService.removeNotification(order.getOrderId());
+        return message;
+    }
+
+    public String shipCompoundOrder(String customerName, Integer orderID) {
+        // Get the specified order
+        CompoundOrder order = (CompoundOrder) orderService2.getCertainOrder(customerName, orderID);
+        // store shipping fee
+        boolean deducateShippingFees = orderService2.deductShippingFees(customerName, orderID);
+
+        List<Customer> customers = new ArrayList<>();
+        List<OrderComponent> otherOrders = order.getOtherOrders();
+
+        // check if customer can deducate shipping fees or not
+        if (!deducateShippingFees)
+            return "Insufficient customer balance";
+
+        // get shipment notification
+        NotificationManagerService notificationManagerService = new NotificationManagerService();
+        //notificationManagerService.setNotificationManagerModel(notificationManagerModel);
+        String message = notificationManagerService.getMessage(order.getOrderId());
+
+        // remove all notifications of all orders in the compound order
+        for (OrderComponent otherOrder : otherOrders) {
+            if (otherOrder instanceof SimpleOrder) {
+                notificationManagerService.removeNotification(otherOrder.getOrderId());
+            }
+        }
+
+        // remove notification from queue
+        notificationManagerService.removeNotification(order.getOrderId());
+        return message;
     }
     
     // Return all system customers
@@ -96,9 +180,5 @@ public class CustomerService {
     // Generate random order ID
     public int generateOrderID() {
         return new Random().nextInt(1001);
-    }
-
-    public boolean shipOrder(OrderComponent order) { // make busniss logic
-        return false;
     }
 }

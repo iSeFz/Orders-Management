@@ -15,10 +15,9 @@ public class SimpleOrder extends OrderComponent {
     }
 
     // Parametrized Constructor
-    public SimpleOrder(Customer customer, String location) {
+    public SimpleOrder(Customer customer) {
         this();
         this.setCustomer(customer);
-        this.setLocation(location);
     }
 
     // Add a single product to the list of products

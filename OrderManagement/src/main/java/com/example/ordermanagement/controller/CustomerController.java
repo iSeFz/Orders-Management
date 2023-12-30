@@ -33,6 +33,18 @@ public class CustomerController {
         return customerService.placeSimpleOrder(customerName, listOfProducts);
     }
 
+    // ship an simple order endpoint
+    @PostMapping("/shipSimpleOrder")
+    public String shipSimpleOrder(@RequestParam String customerName, @RequestParam Integer orderID) {
+        return customerService.shipSimpleOrder(customerName, orderID);
+    }
+
+    // ship a compound order endpoint
+    @PostMapping("/shipCompoundOrder")
+    public String shipCompoundOrder(@RequestParam String customerName, @RequestParam Integer orderID) {
+        return customerService.shipCompoundOrder(customerName, orderID);
+    }
+
     // Get all system customers
     @GetMapping("/getAllCustomers")
     public List<Customer> getAllCustomers() {

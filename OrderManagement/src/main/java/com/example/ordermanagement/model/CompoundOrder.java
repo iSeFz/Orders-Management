@@ -15,10 +15,9 @@ public class CompoundOrder extends OrderComponent {
     }
 
     // Parametrized Constructor
-    public CompoundOrder(Customer customer, String location) {
+    public CompoundOrder(Customer customer) {
         this();
         this.setCustomer(customer);
-        this.setLocation(location);
     }
 
     // Add order to the list of orders

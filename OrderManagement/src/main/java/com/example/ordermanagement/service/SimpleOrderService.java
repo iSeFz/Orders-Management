@@ -79,7 +79,38 @@ public class SimpleOrderService implements OrderComponentService {
         return false;
     }
 
-    public double calculateShipmentFee(SimpleOrder order) {
+
+    public double calculateShipmentFee(String customerName, Integer orderID) {
+        // Get the specified order
+        SimpleOrder order = (SimpleOrder) getCertainOrder(customerName, orderID);
+        // Get number of products in the order
+        int numberOfProducts = order.getProducts().size();
+        double baseFee = 10.0; // A hypothetical base fee
+        double feePerProduct = 5.0; // A hypothetical fee per product
+        // Calculate the total shipping fees
+        double shippingFees = baseFee + (feePerProduct * numberOfProducts);
+        // Set the order shipping fees
+        order.setShippingFees(shippingFees);
+        return shippingFees;
+    }
+
+    @Override
+    public boolean deductShippingFees(String customerName, Integer orderID) {
+        // Get the specified order
+        SimpleOrder order = (SimpleOrder) getCertainOrder(customerName, orderID);
+        // store shipping fee
+        double fee = calculateShipmentFee(customerName, orderID);
+        order.setShippingFees(fee);
+        // check if the balance of the customer is enough
+        if (order.getCustomer().getBalance() < order.getShippingFees()) {
+            return false;
+        }
+        // deduct the shipping fee from the customer's balance
+        order.getCustomer().setBalance(order.getCustomer().getBalance() - order.getShippingFees());
+        return true;
+    }
+
+    /*public double calculateShipmentFee(SimpleOrder order) {
         int numberOfProducts = order.getProducts().size();
         double baseFee = 10.0; // A hypothetical base fee
         double feePerProduct = 5.0; // A hypothetical fee per product
@@ -87,11 +118,13 @@ public class SimpleOrderService implements OrderComponentService {
         // Calculate the total fee
         double totalFee = baseFee + (feePerProduct * numberOfProducts);
         return totalFee;
-    }
+    }*/
 
-    public String shipOrder(SimpleOrder order) {
+    /*public String shipOrder(String customerName, Integer orderID) {
+        // Get the specified order
+        SimpleOrder order = (SimpleOrder) getCertainOrder(customerName, orderID);
         // store shipping fee
-        double fee = calculateShipmentFee(order);
+        double fee = calculateShipmentFee(customerName, orderID);
         order.setShippingFees(fee);
         // check if the balance of the customer is enough
         if (order.getCustomer().getBalance() < order.getShippingFees()) {
@@ -108,7 +141,7 @@ public class SimpleOrderService implements OrderComponentService {
         // remove notification from queue
         notificationManagerService.removeNotification(order.getOrderId());
         return message;
-    }
+    }*/
 
     /* // Calculate order total cost
     // Calculate shipping fees & ship the order
