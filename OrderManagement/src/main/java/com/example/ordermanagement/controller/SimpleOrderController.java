@@ -1,18 +1,23 @@
 package com.example.ordermanagement.controller;
 
-import com.example.ordermanagement.model.SimpleOrder;
 import com.example.ordermanagement.service.SimpleOrderService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
+import org.springframework.web.bind.annotation.*;
+
+// Rest Controller for simple orders
 @RestController
 public class SimpleOrderController {
-    @Autowired
-    private SimpleOrderService simpleOrderService= new SimpleOrderService();
+    // Simple Order Service to be injected
+    private final SimpleOrderService simpleOrderService;
+
+    // Constructor to inject the service
+    public SimpleOrderController(SimpleOrderService simpleOrderService) {
+        this.simpleOrderService = simpleOrderService;
+    }
+
+    // List order details using its order id endpoint
     @GetMapping("/orderDetails")
-    public String listDetails(@RequestParam int id){
-        return simpleOrderService.listDetails(id);
+    public String listDetails(@RequestParam String customerName, @RequestParam Integer orderID) {
+        return simpleOrderService.getOrderDetails(customerName, orderID);
     }
 }

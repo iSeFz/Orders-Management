@@ -1,54 +1,82 @@
 package com.example.ordermanagement.service;
 
-import com.example.ordermanagement.Common;
-import com.example.ordermanagement.model.*;
-import com.example.ordermanagement.repos.CustomersRepo;
-import com.example.ordermanagement.repos.ProductsRepo;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.example.ordermanagement.model.Customer;
+import com.example.ordermanagement.model.OrderComponent;
+import com.example.ordermanagement.model.Product;
+import com.example.ordermanagement.model.SimpleOrder;
+
+import com.example.ordermanagement.repos.CustomersRepo;
+import com.example.ordermanagement.repos.ProductsRepo;
+
 @Service
-public class SimpleOrderService {
-    private List<SimpleOrder> orders;
-//    private Common common;
-    private ProductsRepo productsRepo;
-    private CustomersRepo customersRepo;
-    NotificationManagerModel notificationManagerModel = new NotificationManagerModel();
-    public SimpleOrderService(NotificationManagerModel notificationManagerModel) {
-        this.notificationManagerModel = notificationManagerModel;
+public class SimpleOrderService implements OrderComponentService {
+    // Customer Repo Instance
+    @Autowired
+    private final CustomersRepo customersRepo;
+
+    // Parameterized Constructor
+    public SimpleOrderService(CustomersRepo customersRepo) {
+        this.customersRepo = customersRepo;
     }
-    public SimpleOrderService(){
-        orders = new ArrayList<>();
-        customersRepo = new CustomersRepo();
-        productsRepo = new ProductsRepo();
-        SimpleOrder simpleOrder = new SimpleOrder(customersRepo.getCustomers().get(1),"egypt");
-        simpleOrder.setOrderId(orders.size()+1);
-        orders.add(simpleOrder);
-        orders.get(0).addProduct(productsRepo.getProducts().get(2));
-        orders.get(0).addProduct(productsRepo.getProducts().get(3));
-        orders.get(0).addProduct(productsRepo.getProducts().get(4));
-        orders.get(0).addProduct(productsRepo.getProducts().get(1));
-    }
-    public String listDetails(int id) { // business logic
-        for(SimpleOrder s : orders){
-            if(s.getOrderId() == id)
-                return s.listDetails();
+
+    // Get certain order
+    @Override
+    public OrderComponent getCertainOrder(String customerName, Integer orderID) {
+        // Find the customer
+        Customer customer = customersRepo.getCustomer(customerName);
+        // Find the specified order
+        for(OrderComponent order : customer.getOrders()){
+            if(order.getOrderId() == orderID)
+                return order;
         }
         return null;
     }
 
-    public void addProduct() { // business logic
-        System.out.println("Product added");
+    // List details of specific order
+    @Override
+    public String getOrderDetails(String customerName, Integer orderID) {
+        OrderComponent order = getCertainOrder(customerName, orderID);
+        return (order == null) ? "Order NOT found!" : order.listDetails();
     }
 
-    public double calculateCost() { // business logic
-        return 100.0;
+    // Calculate total cost of order
+    public double calclateTotalCost(String customerName, Integer orderID) {
+        // Get the specified order
+        SimpleOrder order = (SimpleOrder) getCertainOrder(customerName, orderID);
+        // Calculate order total cost
+        double orderCost = 0.0;
+        for (Product product : order.getProducts())
+            orderCost += product.getPrice();
+        // Set the order total cost
+        order.setTotalCost(orderCost);
+        // Return the total cost of the order
+        return orderCost;
     }
-
-    public int getRemainingCount() { // business logic
-        return 10;
+    
+    // Deduct total cost of order from the customer's balance
+    @Override
+    public boolean deductTotalCost(String customerName, Integer orderID) {
+        // Calculate order total cost
+        double orderCost = calclateTotalCost(customerName, orderID);
+        // Find the customer
+        Customer customer = customersRepo.getCustomer(customerName);
+        // Deduct the order cost from the customer's balance
+        double newBalance = customer.getBalance() - orderCost;
+        // Check if the customer has enough balance
+        if (newBalance >= 0) {
+            // Set the new balance
+            customer.setBalance(newBalance);
+            // Update the customer's info in the repo
+            customersRepo.updateCustomerBalance(customerName, newBalance);
+            return true;
+        }
+        return false;
     }
 
     public double calculateShipmentFee(SimpleOrder order) {
@@ -74,11 +102,31 @@ public class SimpleOrderService {
 
         // get shipment notification
         NotificationManagerService notificationManagerService = new NotificationManagerService();
-        notificationManagerService.setNotificationManagerModel(notificationManagerModel);
+        // notificationManagerService.setNotificationManagerModel(notificationManagerModel);
         String message = notificationManagerService.getMessage(order.getOrderId());
 
         // remove notification from queue
         notificationManagerService.removeNotification(order.getOrderId());
         return message;
     }
+
+    /* // Calculate order total cost
+    // Calculate shipping fees & ship the order
+    @Override
+    public double shipOrder(String location) {
+        // Set the order location
+        order.setLocation(location);
+        // Get number of products in the order
+        int numberOfProducts = order.getProducts().size();
+        double baseFee = 10.0; // A hypothetical base fee
+        double feePerProduct = 5.0; // A hypothetical fee per product
+        // Calculate the total shipping fees
+        double shippingFees = baseFee + (feePerProduct * numberOfProducts);
+        // Set the order shipping fees
+        order.setShippingFees(shippingFees);
+        // Deduct fees from the customer's balance
+        customerService.deductShippingFees(order.getCustomer(), shippingFees);
+        return shippingFees;
+    }
+     */
 }
