@@ -3,52 +3,38 @@ package com.example.ordermanagement.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CompoundOrder implements com.example.ordermanagement.model.OrderComponent{
+// Compound Order class
+public class CompoundOrder extends OrderComponent {
+    // List of other orders
     private List<OrderComponent> otherOrders;
-    private String location;
-    private double shippingFees;
-    private Customer customer;
 
-    public CompoundOrder(String location, double shippingFees, Customer customer) {
+    // Default Constructor
+    public CompoundOrder() {
+        super();
         this.otherOrders = new ArrayList<>();
-        this.location = location;
-        this.shippingFees = shippingFees;
-        this.customer = customer;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    // Parametrized Constructor
+    public CompoundOrder(Customer customer, String location) {
+        this();
+        this.setCustomer(customer);
+        this.setLocation(location);
     }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    // Add order to the list of orders
+    public OrderComponent addOrder(OrderComponent order) {
+        this.otherOrders.add(order);
+        return order;
     }
-
-    public void setShippingFees(double shippingFees) {
-        this.shippingFees = shippingFees;
-    }
-
+    
+    // Get other orders within the compound order
     public List<OrderComponent> getOtherOrders() {
         return otherOrders;
     }
 
+    // List order details
     @Override
-    public String listDetails() { // Not Worked Yet
-        return null;
-    }
-
-    @Override
-    public String getLocation() {
-        return location;
-    }
-
-    @Override
-    public double getShippingFees() {
-        return shippingFees;
-    }
-
-    @Override
-    public Customer getCustomer() {
-        return customer;
+    public String listDetails() {
+        return "Compound Order";
     }
 }
