@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ShipMessageFirstTemplateServiceService implements ShipMessageTemplateService {
     ShipMessageFirstTemplateModel shipMessageFirstTemplateModel;
-   public ShipMessageFirstTemplateServiceService(ShipMessageFirstTemplateModel shipMessageFirstTemplateModel) {
+   public   ShipMessageFirstTemplateServiceService(ShipMessageFirstTemplateModel shipMessageFirstTemplateModel) {
         this.shipMessageFirstTemplateModel = shipMessageFirstTemplateModel;
     }
     public void setShipMessageFirstTemplate(ShipMessageFirstTemplateModel shipMessageFirstTemplateModel) {

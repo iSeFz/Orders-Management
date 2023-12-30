@@ -1,8 +1,7 @@
 package com.example.ordermanagement.service;
 
 import com.example.ordermanagement.Common;
-import com.example.ordermanagement.model.Customer;
-import com.example.ordermanagement.model.SimpleOrder;
+import com.example.ordermanagement.model.*;
 import com.example.ordermanagement.repos.CustomersRepo;
 import com.example.ordermanagement.repos.ProductsRepo;
 import org.springframework.stereotype.Service;
@@ -16,6 +15,10 @@ public class SimpleOrderService {
 //    private Common common;
     private ProductsRepo productsRepo;
     private CustomersRepo customersRepo;
+    NotificationManagerModel notificationManagerModel = new NotificationManagerModel();
+    public SimpleOrderService(NotificationManagerModel notificationManagerModel) {
+        this.notificationManagerModel = notificationManagerModel;
+    }
     public SimpleOrderService(){
         orders = new ArrayList<>();
         customersRepo = new CustomersRepo();
@@ -55,20 +58,27 @@ public class SimpleOrderService {
 
         // Calculate the total fee
         double totalFee = baseFee + (feePerProduct * numberOfProducts);
-
         return totalFee;
     }
 
-    public boolean shipOrder(SimpleOrder order) {
+    public String shipOrder(SimpleOrder order) {
         // store shipping fee
         double fee = calculateShipmentFee(order);
         order.setShippingFees(fee);
         // check if the balance of the customer is enough
         if (order.getCustomer().getBalance() < order.getShippingFees()) {
-            return false;
+            return "No Balance Enough to Pay Shipping Fees";
         }
         // deduct the shipping fee from the customer's balance
         order.getCustomer().setBalance(order.getCustomer().getBalance() - order.getShippingFees());
-        return true;
+
+        // get shipment notification
+        NotificationManagerService notificationManagerService = new NotificationManagerService();
+        notificationManagerService.setNotificationManagerModel(notificationManagerModel);
+        String message = notificationManagerService.getMessage(order.getOrderId());
+
+        // remove notification from queue
+        notificationManagerService.removeNotification(order.getOrderId());
+        return message;
     }
 }
