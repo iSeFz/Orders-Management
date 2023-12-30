@@ -34,16 +34,12 @@ public class SimpleOrder extends OrderComponent {
 
     // List order details
     @Override
-//    public List<Product> listDetails() { // business logic
-//        return products;
-//    }
     public String listDetails() {
-        String pro = "";
-        for(Product p : products){
-            pro += p.toString();
-        }
-        return "Simple Order\nProducts:\n" +pro+ "\nLocation: " + this.getLocation() + "\nCustomer name: "
-                + this.getCustomer().getUsername()
-                + "\nTotal Cost: " + this.getTotalCost() + "\nShipping Fees: " + this.getShippingFees() + "\n";
+        String productsInfo = "";
+        for (Product product : products)
+            productsInfo += product.toString();
+        return "\t\tSimple Order #" + this.getOrderId() + " Receipt\nOrdered Products:\n" + productsInfo + "Location: " + this.getLocation() +
+                "\nCustomer Name: " + this.getCustomer().getUsername() +
+                "\nTotal Cost: " + this.getTotalCost() + "\nShipping Fees: " + this.getShippingFees() + "\n";
     }
 }
