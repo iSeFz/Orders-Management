@@ -3,9 +3,9 @@ import com.example.ordermanagement.model.*;
 
 import java.util.List;
 
-public class ShipMessageFirstTemplateServiceService implements ShipMessageTemplateService {
+public class ShipMessageFirstTemplateService implements ShipMessageTemplateService {
     ShipMessageFirstTemplateModel shipMessageFirstTemplateModel;
-   public   ShipMessageFirstTemplateServiceService(ShipMessageFirstTemplateModel shipMessageFirstTemplateModel) {
+   public ShipMessageFirstTemplateService(ShipMessageFirstTemplateModel shipMessageFirstTemplateModel) {
         this.shipMessageFirstTemplateModel = shipMessageFirstTemplateModel;
     }
     public void setShipMessageFirstTemplate(ShipMessageFirstTemplateModel shipMessageFirstTemplateModel) {
@@ -16,7 +16,14 @@ public class ShipMessageFirstTemplateServiceService implements ShipMessageTempla
     }
     @Override
     public String SendMessage() {
-        String ProductList =  shipMessageFirstTemplateModel.getOrderList().listDetails();
+        List<Product> OrderList  =  shipMessageFirstTemplateModel.getOrderList();
+        String ProductList = "";
+        for (int i = 0; i < OrderList.size(); i++) {
+            ProductList += OrderList.get(i).getName();
+            if (i != OrderList.size() - 1) {
+                ProductList += ", ";
+            }
+        }
         return "Dear " + shipMessageFirstTemplateModel.getCustomerName() + ", your booking of the " + ProductList + " is confirmed. thanks for using our store :)";
     }
 }
