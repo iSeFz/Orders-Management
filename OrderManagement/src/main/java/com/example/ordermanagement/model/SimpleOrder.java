@@ -3,59 +3,38 @@ package com.example.ordermanagement.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimpleOrder implements com.example.ordermanagement.model.OrderComponent{
+// Simple Order class
+public class SimpleOrder extends OrderComponent {
+    // List of order products
     private List<Product> products;
-    private String location;
-    private double shippingFees;
-    private Customer customer;
-    private boolean shipped;
 
-    public SimpleOrder(String location, double shippingFees, Customer customer, boolean shipped) {
-        this.products = new ArrayList<>();
-        this.location = location;
-        this.shippingFees = shippingFees;
-        this.customer = customer;
-        this.shipped = shipped;
+    // Default Constructor
+    public SimpleOrder() {
+        super();
+        this.products = new ArrayList<Product>();
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    // Parametrized Constructor
+    public SimpleOrder(Customer customer, String location) {
+        this();
+        this.setCustomer(customer);
+        this.setLocation(location);
     }
 
-    @Override
-    public String listDetails() { // Not Worked Yet
-        return null;
+    // Add a single product to the list of products
+    public Product addProduct(Product product) {
+        this.products.add(product);
+        return product;
     }
 
-    public String getLocation() {
-        return location;
-    }
-
-    public void setShippingFees(double shippingFees) {
-        this.shippingFees = shippingFees;
-    }
-
-    public double getShippingFees() {
-        return shippingFees;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setShipped(boolean shipped) {
-        this.shipped = shipped;
-    }
-
-    public boolean isShipped() {
-        return shipped;
-    }
-
+    // Return all products of the order
     public List<Product> getProducts() {
-        return products;
+        return this.products;
+    }
+
+    // List order details
+    @Override
+    public String listDetails() {
+        return "Simple Order";
     }
 }
