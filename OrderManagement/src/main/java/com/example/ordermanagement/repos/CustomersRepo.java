@@ -37,12 +37,21 @@ public class CustomersRepo {
     }
 
     // Update current customer's info
-    public void updateCustomerBalance(Customer customer) {
-        for (Customer tempCustomer : customers) {
-            if (tempCustomer.getUsername().equals(customer.getUsername())) {
-                tempCustomer.setBalance(customer.getBalance());
+    public void updateCustomerBalance(String customerName, double newBalance) {
+        for (Customer customer : customers) {
+            if (customer.getUsername().equals(customerName)) {
+                customer.setBalance(newBalance);
             }
         }
+    }
+
+    // Get certain customer by username
+    public Customer getCustomer(String username) {
+        for (Customer customer : customers) {
+            if (customer.getUsername().equals(username))
+                return customer;
+        }
+        return null;
     }
 
     // Return the list of current customers on the system

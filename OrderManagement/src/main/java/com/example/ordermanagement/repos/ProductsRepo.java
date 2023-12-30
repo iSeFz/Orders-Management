@@ -36,6 +36,15 @@ public class ProductsRepo {
         return newProduct;
     }
 
+    // Get certain product by serial number
+    public Product getProduct(int serialNum) {
+        for (Product product : products) {
+            if (product.getSerialNum() == serialNum)
+                return product;
+        }
+        return null;
+    }
+
     // Return the list of current products on the system
     public List<Product> getProducts() {
         return products;
