@@ -77,4 +77,10 @@ public class Product {
     public void setRemainingCount(int remainingCount) {
         this.remainingCount = remainingCount;
     }
+    @Override
+    public String toString() {
+        return "Product [serialNum=" + serialNum + ", name=" + name + ", vendor=" + vendor + ", price=" + price
+                + ", categoryName=" + categoryName + ", remainingCount=" + remainingCount + "]\n";
+    }
+
 }

@@ -1,6 +1,8 @@
 package com.example.ordermanagement.service;
 import com.example.ordermanagement.model.*;
 
+import java.util.List;
+
 public class ShipMessageFirstTemplateServiceService implements ShipMessageTemplateService {
     ShipMessageFirstTemplateModel shipMessageFirstTemplateModel;
    public ShipMessageFirstTemplateServiceService(ShipMessageFirstTemplateModel shipMessageFirstTemplateModel) {

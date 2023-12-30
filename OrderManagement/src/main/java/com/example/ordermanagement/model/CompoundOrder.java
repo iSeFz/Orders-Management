@@ -35,6 +35,10 @@ public class CompoundOrder extends OrderComponent {
     // List order details
     @Override
     public String listDetails() {
-        return "Compound Order";
+        String details = "";
+        for(OrderComponent o : otherOrders){
+            details += o.listDetails();
+        }
+        return details;
     }
 }
