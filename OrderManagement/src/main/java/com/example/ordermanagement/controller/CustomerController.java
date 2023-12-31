@@ -6,7 +6,9 @@ import com.example.ordermanagement.service.CompoundOrderService;
 import com.example.ordermanagement.service.CustomerService;
 import com.example.ordermanagement.model.Customer;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.bind.annotation.*;
 
@@ -31,14 +33,24 @@ public class CustomerController {
         return customerService.addCustomer(name, email, password, balance);
     }
 
-    // Place an order endpoint
+    // Place a simple order endpoint
     @PostMapping("/placeSimpleOrder")
-    public SimpleOrder placeSimpleOrder(@RequestParam String customerName,
-                                        @RequestBody List<Integer> listOfProducts) {
+    public String placeSimpleOrder(@RequestParam String customerName, @RequestBody List<Integer> listOfProducts) {
         return customerService.placeSimpleOrder(customerName, listOfProducts);
     }
 
-    // ship an simple order endpoint
+    // Place a compound order endpoint
+    @PostMapping("/placeCompoundOrder")
+    public String placeCompoundOrder(@RequestParam String customerName, @RequestParam String listOfProducts, @RequestBody Map<String, Integer> listOfFriendOrders) {
+        List<Integer> listOfProductsInt = new ArrayList<>();
+        String[] products = listOfProducts.split(",");
+        for (String product : products) {
+            listOfProductsInt.add(Integer.parseInt(product));
+        }
+        return customerService.placeCompoundOrder(customerName, listOfProductsInt, listOfFriendOrders);
+    }
+
+    // ship a simple order endpoint
     @PostMapping("/shipSimpleOrder")
     public String shipSimpleOrder(@RequestParam String customerName, @RequestParam Integer orderID) {
         return customerService.shipSimpleOrder(customerName, orderID);
