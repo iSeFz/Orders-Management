@@ -16,11 +16,11 @@ public class ProductsRepo {
     // Default Constructor
     public ProductsRepo() {
         this.products = new ArrayList<Product>();
-        Product p1 = new Product(1, "Milk", "Darsh", 40, "Dairy", 10);
-        Product p2 = new Product(2, "Cheese", "Oppad", 85, "Dairy", 30);
-        Product p3 = new Product(3, "French Fries", "Seif", 25, "Groceries", 90);
+        Product p1 = new Product(1, "Milk", "Darsh", 10, "Dairy", 10);
+        Product p2 = new Product(2, "Cheese", "Oppad", 20, "Dairy", 30);
+        Product p3 = new Product(3, "French Fries", "Seif", 30, "Groceries", 90);
         Product p4 = new Product(4, "Onions", "Seif", 40, "Groceries", 30);
-        Product p5 = new Product(5, "Kabsa", "Yousef", 1800, "Groceries", 50);
+        Product p5 = new Product(5, "Kabsa", "Yousef", 50, "Groceries", 50);
         products.addAll(Arrays.asList(p1, p2, p3, p4, p5));
     }
 
