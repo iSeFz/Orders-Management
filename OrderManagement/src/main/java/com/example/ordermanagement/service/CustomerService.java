@@ -1,8 +1,6 @@
 package com.example.ordermanagement.service;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
+
 import com.example.ordermanagement.model.*;
 import com.example.ordermanagement.repos.NotificationManagerRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -155,7 +153,7 @@ public class CustomerService {
         for (Map.Entry<String, Integer> entry : listOfFriendOrders.entrySet()) {
             SimpleOrder simpleOrder = (SimpleOrder) orderService1.getCertainOrder(entry.getKey(), entry.getValue());
             // Deduct the order cost from the customer's balance
-            orderService1.deductTotalCost(entry.getKey(), entry.getValue());
+            // orderService1.deductTotalCost(entry.getKey(), entry.getValue());
             // Add friend order to the list of orders
             compoundOrder.addOrder(simpleOrder);
             /////////////////////////////////////////////////////////////////
@@ -242,7 +240,39 @@ public class CustomerService {
         order.getCustomer().setBalance(order.getCustomer().getBalance() + orderCost);
 
 
-        return "Cancel order Successfully";
+        return "Cancel Simple order Successfully";
+    }
+
+    public String cancelCompoundOrder(String customerName, Integer orderID) {
+        // Get the specified order
+        CompoundOrder order = (CompoundOrder) orderService2.getCertainOrder(customerName, orderID);
+        if (order == null)
+            return "Order Doesn't Exsits";
+
+        NotificationManagerService notificationManagerService = new NotificationManagerService(notificationManagerRepo);
+        // remove notification from queue
+        notificationManagerService.removeNotification(order.getOrderId());
+
+        // get OrderMap
+        Map<Integer, List<Product>> orderMap = order.getOrderFromCompound();
+
+        // calculate total cost of every order
+        for (Map.Entry<Integer, List<Product>> entry : orderMap.entrySet()) {
+            double orderCost = 0.0;
+            for (Product product : entry.getValue()) {
+                orderCost += product.getPrice();
+                // increase the product count + 1 in the product repo
+                productsRepo.getProduct(product.getSerialNum()).setRemainingCount(productsRepo.getProduct(product.getSerialNum()).getRemainingCount() + 1);
+            }
+            // add the order cost to the simple order customer balance
+            Customer orderCustomer = order.getCustomerByID(entry.getKey());
+            orderCustomer.setBalance(orderCustomer.getBalance() + orderCost);
+
+            // remove notification of every order in compound order
+            notificationManagerService.removeNotification(entry.getKey());
+        }
+
+        return "Cancel Compound order Successfully";
     }
 
     // Return all system customers

@@ -1,7 +1,9 @@
 package com.example.ordermanagement.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 // Compound Order class
 public class CompoundOrder extends OrderComponent {
@@ -39,5 +41,25 @@ public class CompoundOrder extends OrderComponent {
             details += o.listDetails();
         }
         return details;
+    }
+
+    public Map<Integer, List<Product>> getOrderFromCompound() {
+        Map<Integer, List<Product>> orderMap = new HashMap<>();
+
+        for (OrderComponent order : otherOrders) {
+            SimpleOrder simpleOrder = (SimpleOrder)order;
+            orderMap.put(simpleOrder.getOrderId(), simpleOrder.getProducts());
+        }
+        return orderMap;
+    }
+
+    // get simple order customer
+    public Customer getCustomerByID(Integer orderId) {
+        for(OrderComponent o : otherOrders){
+            if(o.getOrderId() == orderId){
+                return o.getCustomer();
+            }
+        }
+        return null;
     }
 }

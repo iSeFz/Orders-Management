@@ -85,4 +85,9 @@ public class CustomerController {
     public String cancelSimpleOrder(@RequestParam String customerName, @RequestParam Integer orderID) {
         return customerService.cancelSimpleOrder(customerName, orderID);
     }
+
+    @DeleteMapping("/cancelCompoundOrder")
+    public String cancleCompoundOrder(@RequestParam String customerName, @RequestParam Integer orderID) {
+        return customerService.cancelCompoundOrder(customerName, orderID);
+    }
 }
