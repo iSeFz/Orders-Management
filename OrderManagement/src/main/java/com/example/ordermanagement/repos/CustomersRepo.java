@@ -16,11 +16,11 @@ public class CustomersRepo {
     // Default Constructor
     public CustomersRepo() {
         this.customers = new ArrayList<Customer>();
-        Customer c1 = new Customer("Mostafa", "mostafa@gmail.com", "12345", 1000);
-        Customer c2 = new Customer("Oppad", "oppad@gmail.com", "67890", 2000);
-        Customer c3 = new Customer("Seif", "seif@gmail.com", "23456", 3000);
-        Customer c4 = new Customer("Yousef", "mostafa@gmail.com", "78901", 5000);
-        Customer c5 = new Customer("Osama", "osos@gmail.com", "12345", 6000);
+        Customer c1 = new Customer("Mostafa", "mostafa@gmail.com", "12345", 1000, "Dokki");
+        Customer c2 = new Customer("Oppad", "oppad@gmail.com", "67890", 2000, "Giza");
+        Customer c3 = new Customer("Seif", "seif@gmail.com", "23456", 3000, "Tanta");
+        Customer c4 = new Customer("Yousef", "mostafa@gmail.com", "78901", 5000, "Zayed");
+        Customer c5 = new Customer("Osama", "osos@gmail.com", "12345", 6000, "Alex");
         customers.addAll(Arrays.asList(c1, c2, c3, c4, c5));
     }
 

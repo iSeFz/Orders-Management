@@ -9,7 +9,7 @@ public class Customer {
     private String email;
     private String password;
     private double balance;
-    private List<Customer> friends;
+    private String location;
     private List<OrderComponent> orders;
 
     // Default constructor
@@ -18,26 +18,23 @@ public class Customer {
         this.email = "";
         this.password = "";
         this.balance = 0.0;
+        this.location = "";
         this.orders = new ArrayList<>();
     }
 
     // Parameterized constructor
-    public Customer(String username, String email, String password, double balance) {
+    public Customer(String username, String email, String password, double balance, String location) {
         this();
         this.username = username;
         this.email = email;
         this.password = password;
         this.balance = balance;
+        this.location = location;
     }
 
     // Add a new order to the list of orders
     public void addOrder(OrderComponent order) {
         this.orders.add(order);
-    }
-
-    // Add a new friend to the list of friends
-    public void addFriend(Customer friend) {
-        this.friends.add(friend);
     }
 
     public void setUsername(String username) {
@@ -72,8 +69,12 @@ public class Customer {
         return balance;
     }
 
-    public List<Customer> getFriends() {
-        return friends;
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public List<OrderComponent> getOrders() {
@@ -82,6 +83,6 @@ public class Customer {
 
     @Override
     public String toString() {
-        return "Customer { uerrname = " + username + ", email = " + email + ", balance = " + balance + " }";
+        return "Customer { Username = " + username + ", Email = " + email + ", Balance = " + balance + " }";
     }
 }

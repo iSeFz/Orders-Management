@@ -39,9 +39,9 @@ public class CustomerService {
     }
 
     // Create a new account for a customer & add it to the list of customers
-    public Customer addCustomer(String username, String email, String password, double balance) {
-        Customer newCustomer = new Customer(username, email, password, balance);
-        return customersRepo.addCustomer(newCustomer);
+    public String addCustomer(String username, String email, String password, double balance) {
+        Customer newCustomer = new Customer(username, email, password, balance, "Egypt");
+        return customersRepo.addCustomer(newCustomer).toString();
     }
 
     // Place a simple order & assign it to its customer with the list of products given
@@ -71,6 +71,8 @@ public class CustomerService {
             newOrder.addProduct(product);
         // Set the order id
         newOrder.setOrderId(generateOrderID());
+        // Set order location
+        newOrder.setLocation(customer.getLocation());
         // Add the order to the list of customer orders
         customer.addOrder(newOrder);
         // Deduct the order cost from the customer's balance, return the newly created
@@ -133,6 +135,10 @@ public class CustomerService {
             ownerOrder.addProduct(product);
         // Set the order id
         ownerOrder.setOrderId(generateOrderID());
+        // Set owners order location
+        ownerOrder.setLocation(customer.getLocation());
+        // Set compound order location
+        compoundOrder.setLocation(customer.getLocation());
         // Add the order to the list of customer orders
         customer.addOrder(ownerOrder);
         compoundOrder.addOrder(ownerOrder);

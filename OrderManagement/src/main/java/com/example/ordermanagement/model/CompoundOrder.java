@@ -36,7 +36,7 @@ public class CompoundOrder extends OrderComponent {
     // List order details
     @Override
     public String listDetails() {
-        String details = "";
+        String details = "\t\t\tCompound Order #" + this.getOrderId() + " Receipt\n\n";
         for (OrderComponent o : otherOrders) {
             details += o.listDetails();
         }

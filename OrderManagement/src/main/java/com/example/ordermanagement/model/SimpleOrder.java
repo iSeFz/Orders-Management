@@ -39,6 +39,6 @@ public class SimpleOrder extends OrderComponent {
             productsInfo += product.toString();
         return "\t\tSimple Order #" + this.getOrderId() + " Receipt\nOrdered Products:\n" + productsInfo + "Location: " + this.getLocation() +
                 "\nCustomer Name: " + this.getCustomer().getUsername() +
-                "\nTotal Cost: " + this.getTotalCost() + "\nShipping Fees: " + this.getShippingFees() + "\n";
+                "\nTotal Cost: " + this.getTotalCost() + "\n";
     }
 }

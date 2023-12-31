@@ -42,7 +42,7 @@ public class AppController {
 
     // Create a new account for a customer
     @PostMapping("/createAccount")
-    public Customer createAccount(@RequestParam String name, @RequestParam String email,
+    public String createAccount(@RequestParam String name, @RequestParam String email,
             @RequestParam String password, @RequestParam double balance) {
         return customerService.addCustomer(name, email, password, balance);
     }
