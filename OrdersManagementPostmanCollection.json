@@ -1,0 +1,299 @@
+{
+	"info": {
+		"_postman_id": "a190ef1f-9f41-4270-b3e1-0b53794d0748",
+		"name": "Orders Management",
+		"description": "Collection of endpoints to test the program",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32041030"
+	},
+	"item": [
+		{
+			"name": "Customer Create Account",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/createAccount?name=Ahmed&email=ahmed@postman.com&password=p@ssW0rD&balance=1000",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"createAccount"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "Ahmed"
+						},
+						{
+							"key": "email",
+							"value": "ahmed@postman.com"
+						},
+						{
+							"key": "password",
+							"value": "p@ssW0rD"
+						},
+						{
+							"key": "balance",
+							"value": "1000"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Display All Products",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/listAllProducts",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"listAllProducts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List Simple Order Details",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/listSimpleOrderDetails?customerName=Ahmed&orderID=167",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"listSimpleOrderDetails"
+					],
+					"query": [
+						{
+							"key": "customerName",
+							"value": "Ahmed"
+						},
+						{
+							"key": "orderID",
+							"value": "167"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List Compound Order Details",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/listCompoundOrderDetails?customerName=Ahmed&orderID=893",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"listCompoundOrderDetails"
+					],
+					"query": [
+						{
+							"key": "customerName",
+							"value": "Ahmed"
+						},
+						{
+							"key": "orderID",
+							"value": "893"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Place Simple Order",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[1, 2, 3]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/placeSimpleOrder?customerName=Ahmed",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"placeSimpleOrder"
+					],
+					"query": [
+						{
+							"key": "customerName",
+							"value": "Ahmed"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Place Compound Order",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"Ahmed\" : 966,\n    \"Mahmoud\" : 597\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/placeCompoundOrder?customerName=Ahmed&listOfProducts=1,4",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"placeCompoundOrder"
+					],
+					"query": [
+						{
+							"key": "customerName",
+							"value": "Ahmed"
+						},
+						{
+							"key": "listOfProducts",
+							"value": "1,4"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Ship Simple Order",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/shipSimpleOrder?customerName=Ahmed&orderID=966",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"shipSimpleOrder"
+					],
+					"query": [
+						{
+							"key": "customerName",
+							"value": "Ahmed"
+						},
+						{
+							"key": "orderID",
+							"value": "966"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Ship Compound Order",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/shipCompoundOrder?customerName=Ahmed&orderID=893",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"shipCompoundOrder"
+					],
+					"query": [
+						{
+							"key": "customerName",
+							"value": "Ahmed"
+						},
+						{
+							"key": "orderID",
+							"value": "893"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Display All Customers",
+			"request": {
+				"auth": {
+					"type": "inherit"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/listAllCustomers",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"listAllCustomers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List All System Orders",
+			"request": {
+				"auth": {
+					"type": "inherit"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/listAllOrders",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"listAllOrders"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
