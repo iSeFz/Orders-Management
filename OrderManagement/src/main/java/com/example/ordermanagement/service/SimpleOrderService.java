@@ -90,7 +90,7 @@ public class SimpleOrderService implements OrderComponentService {
         // Calculate the total shipping fees
         double shippingFees = baseFee + (feePerProduct * numberOfProducts);
         // Set the order shipping fees
-        order.setShippingFees(shippingFees);
+        // order.setShippingFees(shippingFees);
         return shippingFees;
     }
 

@@ -2,6 +2,9 @@ package com.example.ordermanagement.service;
 import com.example.ordermanagement.repos.NotificationManagerRepo;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Iterator;
+
 public class NotificationManagerService {
     @Autowired
     NotificationManagerRepo notificationManagerRepo;
@@ -26,11 +29,18 @@ public class NotificationManagerService {
         return "No message found";
     }
     public void removeNotification(int orderId) {
-        for (NotificationService notificationService : notificationManagerRepo.getqueue()) {
+        // remove the notification with the given order id from the queue
+        for (Iterator<NotificationService> iterator = notificationManagerRepo.getqueue().iterator(); iterator.hasNext();) {
+            NotificationService notificationService = iterator.next();
+            if (notificationService.notificationModel.getOrderSerialNumberID() == orderId) {
+                iterator.remove();
+            }
+        }
+        /*for (NotificationService notificationService : notificationManagerRepo.getqueue()) {
             if (notificationService.notificationModel.getOrderSerialNumberID() == orderId) {
                 notificationManagerRepo.getqueue().remove(notificationService);
             }
-        }
+        }*/
     }
     public void removeFirstNotification() {
         notificationManagerRepo.getqueue().remove();

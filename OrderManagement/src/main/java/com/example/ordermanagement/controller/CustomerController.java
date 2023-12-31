@@ -67,8 +67,22 @@ public class CustomerController {
     public List<Customer> getAllCustomers() {
         return customerService.getCustomers();
     }
+
+    @GetMapping("/getAllCustomer")
+    public String getAllCustomer() {
+        String str = "";
+        for (Customer customer : customerService.getCustomers()) {
+            str += customer.toString() + "\n";
+        }
+        return str;
+    }
     @GetMapping("/ordereDetails")
     public String getDetails(@RequestParam Integer id , @RequestParam String name){
         return compoundOrderService.getOrderDetails(name,id);
+    }
+
+    @DeleteMapping("/cancelSimpleOrder")
+    public String cancelSimpleOrder(@RequestParam String customerName, @RequestParam Integer orderID) {
+        return customerService.cancelSimpleOrder(customerName, orderID);
     }
 }

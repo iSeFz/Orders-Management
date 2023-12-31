@@ -79,4 +79,9 @@ public class Customer {
     public List<OrderComponent> getOrders() {
         return orders;
     }
+
+    @Override
+    public String toString() {
+        return "Customer { uerrname = " + username + ", email = " + email + ", balance = " + balance + " }";
+    }
 }
