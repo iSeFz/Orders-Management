@@ -1,5 +1,8 @@
 package com.example.ordermanagement.controller;
 
+import com.example.ordermanagement.model.SimpleOrder;
+import com.example.ordermanagement.repos.CustomersRepo;
+import com.example.ordermanagement.service.CompoundOrderService;
 import com.example.ordermanagement.service.CustomerService;
 import com.example.ordermanagement.model.Customer;
 
@@ -13,10 +16,12 @@ import org.springframework.web.bind.annotation.*;
 public class CustomerController {
     // Customer Service to be injected
     private final CustomerService customerService;
+    private final CompoundOrderService compoundOrderService;
 
     // Constructor to inject the service
     public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
+        compoundOrderService = new CompoundOrderService(new CustomersRepo());
     }
 
     // Create a new account for a customer
@@ -28,8 +33,8 @@ public class CustomerController {
 
     // Place an order endpoint
     @PostMapping("/placeSimpleOrder")
-    public String placeSimpleOrder(@RequestParam String customerName,
-        @RequestBody List<Integer> listOfProducts) {
+    public SimpleOrder placeSimpleOrder(@RequestParam String customerName,
+                                        @RequestBody List<Integer> listOfProducts) {
         return customerService.placeSimpleOrder(customerName, listOfProducts);
     }
 
@@ -49,5 +54,9 @@ public class CustomerController {
     @GetMapping("/getAllCustomers")
     public List<Customer> getAllCustomers() {
         return customerService.getCustomers();
+    }
+    @GetMapping("/ordereDetails")
+    public String getDetails(@RequestParam Integer id , @RequestParam String name){
+        return compoundOrderService.getOrderDetails(name,id);
     }
 }
