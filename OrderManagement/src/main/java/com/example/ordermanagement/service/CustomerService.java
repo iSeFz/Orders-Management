@@ -86,7 +86,7 @@ public class CustomerService {
         ShipMessageFirstTemplateModel shipMessageFirstTemplateModel = new ShipMessageFirstTemplateModel();
         shipMessageFirstTemplateModel.setCustomerName(customerName);
         shipMessageFirstTemplateModel.setOrderList(products);
-        MessageTemplateService MessageTemp= new ShipMessageFirstTemplateService(shipMessageFirstTemplateModel);
+        MessageTemplateService MessageTemp = new ShipMessageFirstTemplateService(shipMessageFirstTemplateModel);
         NotificationModel Model2 = new NotificationModel(MessageTemp,newOrder.getOrderId());
         NotificationService notificationService2 = new EmailNotificationService(Model2);
         NotificationManagerService notificationManagerService = new NotificationManagerService(notificationManagerRepo);
@@ -161,8 +161,8 @@ public class CustomerService {
             /////////////////////////////////////////////////////////////////
             //Ship Message
             ShipMessageFirstTemplateModel shipMessageFirstTemplateModel1 = new ShipMessageFirstTemplateModel();
-            shipMessageFirstTemplateModel.setCustomerName(entry.getKey());
-            shipMessageFirstTemplateModel.setOrderList(simpleOrder.getProducts());
+            shipMessageFirstTemplateModel1.setCustomerName(entry.getKey());
+            shipMessageFirstTemplateModel1.setOrderList(simpleOrder.getProducts());
             MessageTemplateService MessageTemp1= new ShipMessageFirstTemplateService(shipMessageFirstTemplateModel1);
             NotificationModel Model1 =new NotificationModel(MessageTemp1,simpleOrder.getOrderId());
             NotificationService notificationService1 = new EmailNotificationService(Model1);
@@ -170,6 +170,7 @@ public class CustomerService {
             notificationManagerService1.addNotification(notificationService1);
             ///////////////////////////////////////
         }
+        customer.addOrder(compoundOrder);
         return Message + "\nCompound Order ID #" + compoundOrder.getOrderId();
     }
 
@@ -207,7 +208,7 @@ public class CustomerService {
         // get shipment notification
         NotificationManagerService notificationManagerService = new NotificationManagerService(notificationManagerRepo);
         //notificationManagerService.setNotificationManagerModel(notificationManagerModel);
-        String message = notificationManagerService.getMessage(order.getOrderId());
+        String message = notificationManagerService.getMessage(orderID);
         // remove all notifications of all orders in the compound order
         for (OrderComponent otherOrder : otherOrders) {
             if (otherOrder instanceof SimpleOrder) {
@@ -216,8 +217,32 @@ public class CustomerService {
         }
 
         // remove notification from queue
-        notificationManagerService.removeNotification(order.getOrderId());
+        notificationManagerService.removeNotification(orderID);
         return message;
+    }
+
+    public String cancelSimpleOrder(String customerName, Integer orderID) {
+        // Get the specified order
+        SimpleOrder order = (SimpleOrder) orderService1.getCertainOrder(customerName, orderID);
+        if (order == null)
+            return "Order Doesn't Exsits";
+
+        NotificationManagerService notificationManagerService = new NotificationManagerService(notificationManagerRepo);
+        // remove notification from queue
+        notificationManagerService.removeNotification(order.getOrderId());
+
+        // calculate total cost of the order
+        double orderCost = 0.0;
+        for (Product product : order.getProducts()) {
+            orderCost += product.getPrice();
+            // increase the product count + 1 in the product repo
+            productsRepo.getProduct(product.getSerialNum()).setRemainingCount(productsRepo.getProduct(product.getSerialNum()).getRemainingCount() + 1);
+        }
+        // add the order cost to the customer balance
+        order.getCustomer().setBalance(order.getCustomer().getBalance() + orderCost);
+
+
+        return "Cancel order Successfully";
     }
 
     // Return all system customers
