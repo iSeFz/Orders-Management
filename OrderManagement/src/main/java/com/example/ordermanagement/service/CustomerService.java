@@ -42,30 +42,14 @@ public class CustomerService {
         return customersRepo.addCustomer(newCustomer);
     }
 
-    /* // Deduct the shipping fees from the customer's balance
-    public String deductShippingFees(Customer customer, double amount) {
-        double newBalance = customer.getBalance() - amount;
-        // Check if the customer has enough balance
-        if (newBalance >= 0) {
-            // Set the new balance
-            customer.setBalance(newBalance);
-            // Update the customer's info in the repo
-            customersRepo.updateCustomerBalance(customer);
-            return "Shipping fees deducted successfully!";
-        } else
-            return "Insufficient balance";
-    } */
 
     // Place a simple order & assign it to its customer with the list of products given
-    public SimpleOrder placeSimpleOrder(String customerName, List<Integer> listOfProductSerials) {
+    public String placeSimpleOrder(String customerName, List<Integer> listOfProductSerials) {
         // Get the customer from the repo
-
-
         Customer customer = customersRepo.getCustomer(customerName);
         // If the customer doesn't exist, return null
         if (customer == null)
-            return null;
-            // return "Customer NOT found!";
+            return "Customer NOT found!";
         // List of products to get from the repo
         List<Product> products = new ArrayList<Product>();
         // Get the products from the repo
@@ -95,7 +79,7 @@ public class CustomerService {
         MessageTemplateService messageTemplateService =placmentMessageTemplateService;
         NotificationModel Model =new NotificationModel(messageTemplateService,newOrder.getOrderId());
         NotificationService notificationService = new EmailNotificationService(Model);
-        String Message= notificationService.doSendNotifcation();
+        String Message = notificationService.doSendNotifcation();
         /////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////
         //Ship Message
@@ -103,33 +87,51 @@ public class CustomerService {
         shipMessageFirstTemplateModel.setCustomerName(customerName);
         shipMessageFirstTemplateModel.setOrderList(products);
         MessageTemplateService MessageTemp= new ShipMessageFirstTemplateService(shipMessageFirstTemplateModel);
-        NotificationModel Model2 =new NotificationModel(MessageTemp,newOrder.getOrderId());
+        NotificationModel Model2 = new NotificationModel(MessageTemp,newOrder.getOrderId());
         NotificationService notificationService2 = new EmailNotificationService(Model2);
         NotificationManagerService notificationManagerService = new NotificationManagerService(notificationManagerRepo);
         notificationManagerService.addNotification(notificationService2);
         ///////////////////////////////////////
         if (orderService1.deductTotalCost(customerName, newOrder.getOrderId()))
-            return newOrder;
-            // return newOrder.listDetails();
+            // return newOrder;
+            return Message + "\nSimple Order ID #" + newOrder.getOrderId();
         // Otherwise, return null
-        return null;
-        // return "Insufficient customer balance";
+        return "Insufficient customer balance";
     }
 
-    public CompoundOrder placeCompoundOrder(String customerName, List<Integer> listOfProductSerials, Map<String, Integer> listOfFriendOrders) {
+    public String placeCompoundOrder(String customerName, List<Integer> listOfProductSerials, Map<String, Integer> listOfFriendOrders) {
         // Get the customer from the repo
         Customer customer = customersRepo.getCustomer(customerName);
         // If the customer doesn't exist, return null
         if (customer == null)
-            return null;
+            return "Customer NOT found!";
 
         // make compound order
         CompoundOrder compoundOrder = new CompoundOrder(customer);
         // Set the order id
         compoundOrder.setOrderId(generateOrderID());
-        /////////////////////////////////////////////////////////////////
+        // List of products to get from the repo
+        List<Product> products = new ArrayList<Product>();
+        // Get the products from the repo
+        for (Integer serialNum : listOfProductSerials) {
+            Product product = productsRepo.getProduct(serialNum);
+            // Add the product to the list of customer order products
+            if (product != null) {
+                // If the product is available, add it to the list
+                products.add(product);
+                // Decrement the remaining count of the product
+                product.setRemainingCount(product.getRemainingCount() - 1);
+            }
+        }
         // place the order of customer
-        SimpleOrder ownerOrder = placeSimpleOrder(customerName, listOfProductSerials);
+        SimpleOrder ownerOrder = new SimpleOrder(customer);
+        // Add the products to the order
+        for (Product product : products)
+            ownerOrder.addProduct(product);
+        // Set the order id
+        ownerOrder.setOrderId(generateOrderID());
+        // Add the order to the list of customer orders
+        customer.addOrder(ownerOrder);
         compoundOrder.addOrder(ownerOrder);
         // Deduct the order cost from the owner customer's balance
         orderService1.deductTotalCost(customerName, ownerOrder.getOrderId());
@@ -168,7 +170,7 @@ public class CustomerService {
             notificationManagerService1.addNotification(notificationService1);
             ///////////////////////////////////////
         }
-        return compoundOrder;
+        return Message + "\nCompound Order ID #" + compoundOrder.getOrderId();
     }
 
     // Ship an existing Simple order

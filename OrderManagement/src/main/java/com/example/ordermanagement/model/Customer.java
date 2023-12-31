@@ -18,7 +18,6 @@ public class Customer {
         this.email = "";
         this.password = "";
         this.balance = 0.0;
-        this.friends = new ArrayList<>();
         this.orders = new ArrayList<>();
     }
 
