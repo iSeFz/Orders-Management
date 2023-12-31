@@ -27,7 +27,7 @@ public class CompoundOrder extends OrderComponent {
         this.otherOrders.add(order);
         return order;
     }
-    
+
     // Get other orders within the compound order
     public List<OrderComponent> getOtherOrders() {
         return otherOrders;
@@ -37,7 +37,7 @@ public class CompoundOrder extends OrderComponent {
     @Override
     public String listDetails() {
         String details = "";
-        for(OrderComponent o : otherOrders){
+        for (OrderComponent o : otherOrders) {
             details += o.listDetails();
         }
         return details;
@@ -47,7 +47,7 @@ public class CompoundOrder extends OrderComponent {
         Map<Integer, List<Product>> orderMap = new HashMap<>();
 
         for (OrderComponent order : otherOrders) {
-            SimpleOrder simpleOrder = (SimpleOrder)order;
+            SimpleOrder simpleOrder = (SimpleOrder) order;
             orderMap.put(simpleOrder.getOrderId(), simpleOrder.getProducts());
         }
         return orderMap;
@@ -55,8 +55,8 @@ public class CompoundOrder extends OrderComponent {
 
     // get simple order customer
     public Customer getCustomerByID(Integer orderId) {
-        for(OrderComponent o : otherOrders){
-            if(o.getOrderId() == orderId){
+        for (OrderComponent o : otherOrders) {
+            if (o.getOrderId() == orderId) {
                 return o.getCustomer();
             }
         }

@@ -1,5 +1,7 @@
 package com.example.ordermanagement.service;
+
 import org.springframework.stereotype.Service;
+
 @Service
 public class PlacmentMessageSecondTemplateService implements PlacmentMessageTemplateService {
     @Override

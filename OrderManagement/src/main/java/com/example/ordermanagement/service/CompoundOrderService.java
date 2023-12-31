@@ -1,20 +1,16 @@
 package com.example.ordermanagement.service;
 
-import com.example.ordermanagement.model.*;
-import com.example.ordermanagement.repos.CustomersRepo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import com.example.ordermanagement.repos.NotificationManagerRepo;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.ordermanagement.model.*;
+import com.example.ordermanagement.repos.CustomersRepo;
+
 @Service
-public class CompoundOrderService implements OrderComponentService{
-    NotificationManagerRepo notificationManagerRepo = new NotificationManagerRepo();
-    /*public CompoundOrderService(NotificationManagerModel notificationManagerModel) {
-        this.notificationManagerModel = notificationManagerModel;
-    }*/
+public class CompoundOrderService implements OrderComponentService {
     @Autowired
     private final CustomersRepo customersRepo;
 
@@ -23,24 +19,13 @@ public class CompoundOrderService implements OrderComponentService{
         this.customersRepo = customersRepo;
     }
 
-    public void addOrder() { // business logic // named in class diagram: addChild()
-        System.out.println("Order added");
-    }
-
-    public void removeOrder() { // business logic // named in class diagram: removeChild()
-        System.out.println("Order removed");
-    }
-
-    public List<OrderComponent> getOrders(CompoundOrder order) { // business logic // named in class diagram: getChildren()
-        return order.getOtherOrders();
-    }
     @Override
     public OrderComponent getCertainOrder(String customerName, Integer orderID) {
         // Find the customer
         Customer customer = customersRepo.getCustomer(customerName);
         // Find the specified order
-        for(OrderComponent order : customer.getOrders()){
-            if(order.getOrderId() == orderID)
+        for (OrderComponent order : customer.getOrders()) {
+            if (order.getOrderId() == orderID)
                 return order;
         }
         return null;
@@ -83,7 +68,6 @@ public class CompoundOrderService implements OrderComponentService{
         return false;
     }
 
-
     public double calculateShipmentFee(String customerName, Integer orderID) {
         // Get the specified order
         CompoundOrder order = (CompoundOrder) getCertainOrder(customerName, orderID);
@@ -102,6 +86,7 @@ public class CompoundOrderService implements OrderComponentService{
         return totalFee;
     }
 
+    @Override
     public boolean deductShippingFees(String customerName, Integer orderID) {
         // Get the specified order
         CompoundOrder order = (CompoundOrder) getCertainOrder(customerName, orderID);
@@ -134,68 +119,4 @@ public class CompoundOrderService implements OrderComponentService{
 
         return true;
     }
-
-    /*public double calculateShipmentFee(CompoundOrder order) {
-        List<OrderComponent> otherOrders = order.getOtherOrders();
-        int numberOfProducts = 0;
-        for (OrderComponent otherOrder : otherOrders) {
-            if (otherOrder instanceof SimpleOrder)
-                numberOfProducts += ((SimpleOrder) otherOrder).getProducts().size();
-        }
-        double baseFee = 10.0; // A hypothetical base fee
-        double feePerProduct = 5.0; // A hypothetical fee per product
-
-        // Calculate the total fee
-        double totalFee = baseFee + (feePerProduct * numberOfProducts);
-
-        return totalFee;
-    }*/
-
-    /*public String shipOrder(String customerName, Integer orderID) {
-        // Get the specified order
-        CompoundOrder order = (CompoundOrder) getCertainOrder(customerName, orderID);
-        // store shipping fee
-        double fee = calculateShipmentFee(customerName, orderID);
-        order.setShippingFees(fee);
-        List<Customer> customers = new ArrayList<>();
-        List<OrderComponent> otherOrders = order.getOtherOrders();
-
-        for (OrderComponent otherOrder : otherOrders) {
-            if (otherOrder instanceof SimpleOrder)
-                customers.add(((SimpleOrder) otherOrder).getCustomer());
-        }
-
-        // check if the balance of the customer is enough
-        boolean noBalance = false;
-        for (Customer customer : customers) {
-            if (customer.getBalance() < (order.getShippingFees() / customers.size())) {
-                noBalance = true;
-            }
-        }
-
-        if (noBalance)
-            return "No Balance Enough to Pay Shipping Fees";
-
-        // deduct the shipping fee from the customer's balance
-        for (Customer customer : customers) {
-            customer.setBalance(customer.getBalance() - (order.getShippingFees() / customers.size()));
-        }
-
-        // get shipment notification
-        NotificationManagerService notificationManagerService = new NotificationManagerService();
-        notificationManagerService.setNotificationManagerModel(notificationManagerModel);
-        String message = notificationManagerService.getMessage(order.getOrderId());
-
-        // remove all notifications of all orders in the compound order
-        for (OrderComponent otherOrder : otherOrders) {
-            if (otherOrder instanceof SimpleOrder) {
-                notificationManagerService.removeNotification(otherOrder.getOrderId());
-            }
-        }
-
-        // remove notification from queue
-        notificationManagerService.removeNotification(order.getOrderId());
-
-        return message;
-    }*/
 }

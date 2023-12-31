@@ -1,4 +1,5 @@
 package com.example.ordermanagement.service;
+
 import java.util.*;
 
 import com.example.ordermanagement.model.*;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import com.example.ordermanagement.repos.CustomersRepo;
 import com.example.ordermanagement.repos.ProductsRepo;
+
 @Service
 public class CustomerService {
     // Customer & Product repos to be injected
@@ -26,7 +28,9 @@ public class CustomerService {
     private final OrderComponentService orderService2;
 
     // Constructor to inject the repo
-    public CustomerService(CustomersRepo customersRepo, NotificationManagerRepo notificationManagerRepo, ProductsRepo productsRepo, @Qualifier("simpleOrderService") OrderComponentService orderService1 , @Qualifier("compoundOrderService") OrderComponentService orderService2) {
+    public CustomerService(CustomersRepo customersRepo, NotificationManagerRepo notificationManagerRepo,
+            ProductsRepo productsRepo, @Qualifier("simpleOrderService") OrderComponentService orderService1,
+            @Qualifier("compoundOrderService") OrderComponentService orderService2) {
         this.customersRepo = customersRepo;
         this.notificationManagerRepo = notificationManagerRepo;
         this.productsRepo = productsRepo;
@@ -39,7 +43,6 @@ public class CustomerService {
         Customer newCustomer = new Customer(username, email, password, balance);
         return customersRepo.addCustomer(newCustomer);
     }
-
 
     // Place a simple order & assign it to its customer with the list of products given
     public String placeSimpleOrder(String customerName, List<Integer> listOfProductSerials) {
@@ -70,22 +73,23 @@ public class CustomerService {
         newOrder.setOrderId(generateOrderID());
         // Add the order to the list of customer orders
         customer.addOrder(newOrder);
-        // Deduct the order cost from the customer's balance, return the newly created order
+        // Deduct the order cost from the customer's balance, return the newly created
+        // order
         /////////////////////////////////////////////////////////////////
-        //Placment Message
+        // Placment Message
         PlacmentMessageTemplateService placmentMessageTemplateService = new PlacmentMessageFirstTemplateService();
-        MessageTemplateService messageTemplateService =placmentMessageTemplateService;
-        NotificationModel Model =new NotificationModel(messageTemplateService,newOrder.getOrderId());
+        MessageTemplateService messageTemplateService = placmentMessageTemplateService;
+        NotificationModel Model = new NotificationModel(messageTemplateService, newOrder.getOrderId());
         NotificationService notificationService = new EmailNotificationService(Model);
         String Message = notificationService.doSendNotifcation();
         /////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////
-        //Ship Message
+        // Ship Message
         ShipMessageFirstTemplateModel shipMessageFirstTemplateModel = new ShipMessageFirstTemplateModel();
         shipMessageFirstTemplateModel.setCustomerName(customerName);
         shipMessageFirstTemplateModel.setOrderList(products);
         MessageTemplateService MessageTemp = new ShipMessageFirstTemplateService(shipMessageFirstTemplateModel);
-        NotificationModel Model2 = new NotificationModel(MessageTemp,newOrder.getOrderId());
+        NotificationModel Model2 = new NotificationModel(MessageTemp, newOrder.getOrderId());
         NotificationService notificationService2 = new EmailNotificationService(Model2);
         NotificationManagerService notificationManagerService = new NotificationManagerService(notificationManagerRepo);
         notificationManagerService.addNotification(notificationService2);
@@ -97,7 +101,8 @@ public class CustomerService {
         return "Insufficient customer balance";
     }
 
-    public String placeCompoundOrder(String customerName, List<Integer> listOfProductSerials, Map<String, Integer> listOfFriendOrders) {
+    public String placeCompoundOrder(String customerName, List<Integer> listOfProductSerials,
+            Map<String, Integer> listOfFriendOrders) {
         // Get the customer from the repo
         Customer customer = customersRepo.getCustomer(customerName);
         // If the customer doesn't exist, return null
@@ -133,19 +138,19 @@ public class CustomerService {
         compoundOrder.addOrder(ownerOrder);
         // Deduct the order cost from the owner customer's balance
         orderService1.deductTotalCost(customerName, ownerOrder.getOrderId());
-        //Placment Message
+        // Placment Message
         PlacmentMessageTemplateService placmentMessageTemplateService = new PlacmentMessageFirstTemplateService();
-        MessageTemplateService messageTemplateService =placmentMessageTemplateService;
-        NotificationModel Model =new NotificationModel(messageTemplateService,compoundOrder.getOrderId());
+        MessageTemplateService messageTemplateService = placmentMessageTemplateService;
+        NotificationModel Model = new NotificationModel(messageTemplateService, compoundOrder.getOrderId());
         NotificationService notificationService = new EmailNotificationService(Model);
-        String Message= notificationService.doSendNotifcation();
+        String Message = notificationService.doSendNotifcation();
         /////////////////////////////////////////////////////////////////
-        //Ship Message
+        // Ship Message
         ShipMessageFirstTemplateModel shipMessageFirstTemplateModel = new ShipMessageFirstTemplateModel();
         shipMessageFirstTemplateModel.setCustomerName(customerName);
         shipMessageFirstTemplateModel.setOrderList(ownerOrder.getProducts());
-        MessageTemplateService MessageTemp= new ShipMessageFirstTemplateService(shipMessageFirstTemplateModel);
-        NotificationModel Model2 =new NotificationModel(MessageTemp,compoundOrder.getOrderId());
+        MessageTemplateService MessageTemp = new ShipMessageFirstTemplateService(shipMessageFirstTemplateModel);
+        NotificationModel Model2 = new NotificationModel(MessageTemp, compoundOrder.getOrderId());
         NotificationService notificationService2 = new EmailNotificationService(Model2);
         NotificationManagerService notificationManagerService = new NotificationManagerService(notificationManagerRepo);
         notificationManagerService.addNotification(notificationService2);
@@ -157,14 +162,15 @@ public class CustomerService {
             // Add friend order to the list of orders
             compoundOrder.addOrder(simpleOrder);
             /////////////////////////////////////////////////////////////////
-            //Ship Message
+            // Ship Message
             ShipMessageFirstTemplateModel shipMessageFirstTemplateModel1 = new ShipMessageFirstTemplateModel();
             shipMessageFirstTemplateModel1.setCustomerName(entry.getKey());
             shipMessageFirstTemplateModel1.setOrderList(simpleOrder.getProducts());
-            MessageTemplateService MessageTemp1= new ShipMessageFirstTemplateService(shipMessageFirstTemplateModel1);
-            NotificationModel Model1 =new NotificationModel(MessageTemp1,simpleOrder.getOrderId());
+            MessageTemplateService MessageTemp1 = new ShipMessageFirstTemplateService(shipMessageFirstTemplateModel1);
+            NotificationModel Model1 = new NotificationModel(MessageTemp1, simpleOrder.getOrderId());
             NotificationService notificationService1 = new EmailNotificationService(Model1);
-            NotificationManagerService notificationManagerService1 = new NotificationManagerService(notificationManagerRepo);
+            NotificationManagerService notificationManagerService1 = new NotificationManagerService(
+                    notificationManagerRepo);
             notificationManagerService1.addNotification(notificationService1);
             ///////////////////////////////////////
         }
@@ -196,7 +202,6 @@ public class CustomerService {
         // store shipping fee
         boolean deducateShippingFees = orderService2.deductShippingFees(customerName, orderID);
 
-        List<Customer> customers = new ArrayList<>();
         List<OrderComponent> otherOrders = order.getOtherOrders();
 
         // check if customer can deducate shipping fees or not
@@ -205,7 +210,6 @@ public class CustomerService {
 
         // get shipment notification
         NotificationManagerService notificationManagerService = new NotificationManagerService(notificationManagerRepo);
-        //notificationManagerService.setNotificationManagerModel(notificationManagerModel);
         String message = notificationManagerService.getMessage(orderID);
         // remove all notifications of all orders in the compound order
         for (OrderComponent otherOrder : otherOrders) {
@@ -234,11 +238,11 @@ public class CustomerService {
         for (Product product : order.getProducts()) {
             orderCost += product.getPrice();
             // increase the product count + 1 in the product repo
-            productsRepo.getProduct(product.getSerialNum()).setRemainingCount(productsRepo.getProduct(product.getSerialNum()).getRemainingCount() + 1);
+            productsRepo.getProduct(product.getSerialNum())
+                    .setRemainingCount(productsRepo.getProduct(product.getSerialNum()).getRemainingCount() + 1);
         }
         // add the order cost to the customer balance
         order.getCustomer().setBalance(order.getCustomer().getBalance() + orderCost);
-
 
         return "Cancel Simple order Successfully";
     }
@@ -262,7 +266,8 @@ public class CustomerService {
             for (Product product : entry.getValue()) {
                 orderCost += product.getPrice();
                 // increase the product count + 1 in the product repo
-                productsRepo.getProduct(product.getSerialNum()).setRemainingCount(productsRepo.getProduct(product.getSerialNum()).getRemainingCount() + 1);
+                productsRepo.getProduct(product.getSerialNum())
+                        .setRemainingCount(productsRepo.getProduct(product.getSerialNum()).getRemainingCount() + 1);
             }
             // add the order cost to the simple order customer balance
             Customer orderCustomer = order.getCustomerByID(entry.getKey());
@@ -284,4 +289,6 @@ public class CustomerService {
     public int generateOrderID() {
         return new Random().nextInt(1001);
     }
+
+    // public String listAllOrders();
 }

@@ -77,7 +77,7 @@ public class Product {
     public void setRemainingCount(int remainingCount) {
         this.remainingCount = remainingCount;
     }
-    
+
     // List product details
     @Override
     public String toString() {

@@ -64,10 +64,11 @@ public class AppController {
     public String listCompoundOrderDetails(@RequestParam String customerName, @RequestParam Integer orderID) {
         return compoundOrderService.getOrderDetails(customerName, orderID);
     }
-    
+
     // Place a compound order endpoint
     @PostMapping("/placeCompoundOrder")
-    public String placeCompoundOrder(@RequestParam String customerName, @RequestParam String listOfProducts, @RequestBody Map<String, Integer> listOfFriendOrders) {
+    public String placeCompoundOrder(@RequestParam String customerName, @RequestParam String listOfProducts,
+            @RequestBody Map<String, Integer> listOfFriendOrders) {
         List<Integer> listOfProductsInt = new ArrayList<Integer>();
         String[] products = listOfProducts.split(",");
         for (String product : products) {

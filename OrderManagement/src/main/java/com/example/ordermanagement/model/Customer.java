@@ -39,7 +39,7 @@ public class Customer {
     public void addFriend(Customer friend) {
         this.friends.add(friend);
     }
-    
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -75,7 +75,7 @@ public class Customer {
     public List<Customer> getFriends() {
         return friends;
     }
-    
+
     public List<OrderComponent> getOrders() {
         return orders;
     }

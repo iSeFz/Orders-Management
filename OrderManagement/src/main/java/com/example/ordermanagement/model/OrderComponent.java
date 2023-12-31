@@ -1,7 +1,5 @@
 package com.example.ordermanagement.model;
 
-import java.util.List;
-
 // Abstract class to represent an order
 public abstract class OrderComponent {
     private String location;
@@ -17,8 +15,14 @@ public abstract class OrderComponent {
     public String getLocation() {
         return this.location;
     }
-    public int getOrderId(){return orderId;}
-    public void setOrderId(int id){orderId = id;}
+
+    public int getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(int id) {
+        orderId = id;
+    }
 
     public Customer getCustomer() {
         return this.customer;

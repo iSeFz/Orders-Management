@@ -1,7 +1,5 @@
 package com.example.ordermanagement;
 
-import com.example.ordermanagement.model.*;
-import com.example.ordermanagement.service.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
