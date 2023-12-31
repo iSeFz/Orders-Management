@@ -101,6 +101,12 @@ public class AppController {
         return customerService.cancelCompoundOrder(customerName, orderID);
     }
 
+    // List All System Orders
+    @GetMapping("/listAllOrders")
+    public String getAllOrders() {
+        return customerService.listAllOrders();
+    }
+
     // For Testing ONLY - List all system customers
     @GetMapping("/listAllCustomers")
     public String getAllCustomer() {

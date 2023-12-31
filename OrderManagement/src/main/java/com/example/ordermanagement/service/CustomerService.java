@@ -296,5 +296,12 @@ public class CustomerService {
         return new Random().nextInt(1001);
     }
 
-    // public String listAllOrders();
+    // List all system orders
+    public String listAllOrders() {
+        String result = "\t\t\t\tAll System Orders\n--------------------------------------------\n";
+        for (Customer customer : customersRepo.getCustomers())
+            for (OrderComponent order : customer.getOrders())
+                result += order.listDetails() + "\n--------------------------------------------\n";
+        return result;
+    }
 }
